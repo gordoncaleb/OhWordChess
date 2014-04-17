@@ -4,21 +4,16 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Image;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 
-import chessBackend.Move;
-import chessBackend.Side;
-import chessIO.ChessImages;
-import chessPieces.PieceID;
+import com.gordoncaleb.client.chess.Move;
+import com.gordoncaleb.client.chess.Side;
+import com.gordoncaleb.client.pieces.Piece.PieceID;
 
 public class SquarePanel extends JPanel implements PieceGUI {
 	private static final long serialVersionUID = 1L;

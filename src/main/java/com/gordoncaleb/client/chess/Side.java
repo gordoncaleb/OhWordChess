@@ -1,4 +1,4 @@
-package chessBackend;
+package com.gordoncaleb.client.chess;
 
 public enum Side {
 	BLACK, WHITE, NONE, BOTH;

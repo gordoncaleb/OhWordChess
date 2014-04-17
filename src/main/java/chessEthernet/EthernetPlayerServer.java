@@ -14,13 +14,14 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+import com.gordoncaleb.client.chess.Board;
+import com.gordoncaleb.client.chess.Move;
+import com.gordoncaleb.client.chess.Side;
+
 import chessAI.AI;
-import chessBackend.Board;
 import chessBackend.GameResults;
-import chessBackend.Move;
 import chessBackend.Player;
 import chessBackend.PlayerContainer;
-import chessBackend.Side;
 import chessGUI.AISettingsGUI;
 import chessIO.FileIO;
 import chessIO.XMLParser;

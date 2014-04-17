@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-import chessBackend.Move;
-import chessBackend.MoveNote;
+import com.gordoncaleb.client.chess.Move;
+import com.gordoncaleb.client.chess.Move.MoveNote;
 
 public class DecisionNode implements Comparable<DecisionNode> {
 

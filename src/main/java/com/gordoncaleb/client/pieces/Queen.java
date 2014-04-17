@@ -1,67 +1,66 @@
-package chessPieces;
+package com.gordoncaleb.client.pieces;
 
 import java.util.ArrayList;
 
-import chessBackend.BitBoard;
-import chessBackend.Board;
-import chessBackend.MoveNote;
-import chessBackend.Side;
-import chessBackend.Move;
+import com.gordoncaleb.client.chess.BitBoard;
+import com.gordoncaleb.client.chess.Board;
+import com.gordoncaleb.client.chess.Move;
+import com.gordoncaleb.client.chess.Move.MoveNote;
+import com.gordoncaleb.client.chess.Side;
 
-public class Queen {
+public class Queen extends Piece {
 	public static int[][] QUEENMOVES = { { 1, 1, -1, -1, 1, -1, 0, 0 }, { 1, -1, 1, -1, 0, 0, 1, -1 } };
 
-	public Queen() {
+	public Queen(PieceID id, Side player, int row, int col, boolean moved) {
+		super(id, player, row, col, moved);
 	}
 
-	public static PieceID getPieceID() {
+	public PieceID getPieceID() {
 		return PieceID.QUEEN;
 	}
 
-	public static String getName() {
+	public String getName() {
 		return "Queen";
 	}
 
-	public static String getStringID() {
+	public String getStringID() {
 		return "Q";
 	}
 
-	public static void generateMoves(Piece p, Board board, ArrayList<Long> moves) {
-		int currentRow = p.getRow();
-		int currentCol = p.getCol();
+	public void generateMoves(Board board, ArrayList<Long> moves) {
+
 		int nextRow;
 		int nextCol;
 		PositionStatus pieceStatus;
 
 		int i = 1;
 		for (int d = 0; d < 8; d++) {
-			nextRow = currentRow + i * QUEENMOVES[0][d];
-			nextCol = currentCol + i * QUEENMOVES[1][d];
-			pieceStatus = board.checkPiece(nextRow, nextCol, p.getSide());
+			nextRow = row + i * QUEENMOVES[0][d];
+			nextCol = col + i * QUEENMOVES[1][d];
+			pieceStatus = board.checkPiece(nextRow, nextCol, player);
 
 			while (pieceStatus == PositionStatus.NO_PIECE) {
 
-				moves.add(Move.moveLong(currentRow, currentCol, nextRow, nextCol, 0, MoveNote.NONE));
+				moves.add(Move.moveLong(row, col, nextRow, nextCol, 0, MoveNote.NONE));
 
 				i++;
-				nextRow = currentRow + i * QUEENMOVES[0][d];
-				nextCol = currentCol + i * QUEENMOVES[1][d];
-				pieceStatus = board.checkPiece(nextRow, nextCol, p.getSide());
+				nextRow = row + i * QUEENMOVES[0][d];
+				nextCol = col + i * QUEENMOVES[1][d];
+				pieceStatus = board.checkPiece(nextRow, nextCol, player);
 
 			}
 
 			if (pieceStatus == PositionStatus.ENEMY) {
-				moves.add(Move.moveLong(currentRow, currentCol, nextRow, nextCol, board.getPieceValue(nextRow, nextCol), MoveNote.NONE, board.getPiece(nextRow, nextCol)));
+				moves.add(Move.moveLong(row, col, nextRow, nextCol, board.getPieceValue(nextRow, nextCol), MoveNote.NONE,
+						board.getPiece(nextRow, nextCol)));
 			}
 
 			i = 1;
 		}
 	}
 
-	public static ArrayList<Long> generateValidMoves(Piece p, Board board, long[] nullMoveInfo, long[] posBitBoard, ArrayList<Long> validMoves) {
-		int currentRow = p.getRow();
-		int currentCol = p.getCol();
-		Side player = p.getSide();
+	public void generateValidMoves(Board board, long[] nullMoveInfo, long[] posBitBoard, ArrayList<Long> validMoves) {
+
 		int nextRow;
 		int nextCol;
 		int value;
@@ -69,13 +68,13 @@ public class Queen {
 
 		int i = 1;
 		for (int d = 0; d < 8; d++) {
-			nextRow = currentRow + i * QUEENMOVES[0][d];
-			nextCol = currentCol + i * QUEENMOVES[1][d];
+			nextRow = row + i * QUEENMOVES[0][d];
+			nextCol = col + i * QUEENMOVES[1][d];
 			pieceStatus = board.checkPiece(nextRow, nextCol, player);
 
 			while (pieceStatus == PositionStatus.NO_PIECE) {
 
-				if (p.isValidMove(nextRow, nextCol, nullMoveInfo)) {
+				if (isValidMove(nextRow, nextCol, nullMoveInfo)) {
 
 					if ((nullMoveInfo[0] & BitBoard.getMask(nextRow, nextCol)) != 0) {
 						value = -Values.QUEEN_VALUE >> 1;
@@ -83,18 +82,18 @@ public class Queen {
 						value = 0;
 					}
 
-					validMoves.add(Move.moveLong(currentRow, currentCol, nextRow, nextCol, value, MoveNote.NONE));
+					validMoves.add(Move.moveLong(row, col, nextRow, nextCol, value, MoveNote.NONE));
 				}
 
 				i++;
-				nextRow = currentRow + i * QUEENMOVES[0][d];
-				nextCol = currentCol + i * QUEENMOVES[1][d];
+				nextRow = row + i * QUEENMOVES[0][d];
+				nextCol = col + i * QUEENMOVES[1][d];
 				pieceStatus = board.checkPiece(nextRow, nextCol, player);
 
 			}
 
 			if (pieceStatus == PositionStatus.ENEMY) {
-				if (p.isValidMove(nextRow, nextCol, nullMoveInfo)) {
+				if (isValidMove(nextRow, nextCol, nullMoveInfo)) {
 
 					value = board.getPieceValue(nextRow, nextCol);
 
@@ -102,15 +101,13 @@ public class Queen {
 						value -= Values.QUEEN_VALUE >> 1;
 					}
 
-					Long moveLong = Move.moveLong(currentRow, currentCol, nextRow, nextCol, value, MoveNote.NONE, board.getPiece(nextRow, nextCol));
+					Long moveLong = Move.moveLong(row, col, nextRow, nextCol, value, MoveNote.NONE, board.getPiece(nextRow, nextCol));
 					validMoves.add(moveLong);
 				}
 			}
 
 			i = 1;
 		}
-
-		return validMoves;
 
 	}
 
@@ -119,7 +116,7 @@ public class Queen {
 
 		nullMoveInfo[1] = -1L;
 
-		Piece queen = new Piece(PieceID.QUEEN, Side.WHITE, 6, 0, false);
+		Piece queen = new Queen(PieceID.QUEEN, Side.WHITE, 6, 0, false);
 		long piece = queen.getBit();
 		long kingBitBoard = BitBoard.getMask(1, 0);
 
@@ -139,7 +136,7 @@ public class Queen {
 
 		System.out.println("king check\n" + BitBoard.printBitBoard(kingCheckVectors));
 
-		Queen.getNullMoveInfo(queen, null, nullMoveInfo, updown, left, right, kingBitBoard, kingCheckVectors, friendly);
+		queen.getNullMoveInfo(null, nullMoveInfo, updown, left, right, kingBitBoard, kingCheckVectors, friendly);
 
 		System.out.println("king\n" + BitBoard.printBitBoard(kingBitBoard));
 
@@ -148,16 +145,16 @@ public class Queen {
 		System.out.println("[2]\n" + BitBoard.printBitBoard(nullMoveInfo[2]));
 	}
 
-	public static void getNullMoveInfo(Piece piece, Board board, long[] nullMoveInfo, long updown, long left, long right, long kingBitBoard, long kingCheckVectors,
+	public void getNullMoveInfo(Board board, long[] nullMoveInfo, long updown, long left, long right, long kingBitBoard, long kingCheckVectors,
 			long friendly) {
 
-		long bitPiece = piece.getBit();
+		long bitPiece = getBit();
 
 		// up ------------------------------------------------------------
 		long temp = bitPiece;
 		long temp2 = bitPiece;
-		int r = piece.getRow();
-		int c = piece.getCol();
+		int r = row;
+		int c = col;
 		long attackVector = 0;
 
 		while ((temp2 = (temp2 >>> 8 & updown)) != 0) {
@@ -188,7 +185,7 @@ public class Queen {
 		// down-----------------------------------------------------------
 		temp = bitPiece;
 		temp2 = bitPiece;
-		r = piece.getRow();
+		r = row;
 		attackVector = 0;
 
 		while ((temp2 = (temp2 << 8 & updown)) != 0) {
@@ -215,14 +212,14 @@ public class Queen {
 				}
 			}
 		}
-		
+
 		// going westward -----------------------------------------------------
 		if ((bitPiece & 0x0101010101010101L) == 0) {
 
 			// west
 			temp = bitPiece;
 			temp2 = bitPiece;
-			r = piece.getRow();
+			r = row;
 			attackVector = 0;
 
 			while ((temp2 = (temp2 >>> 1 & left)) != 0) {
@@ -253,7 +250,7 @@ public class Queen {
 			// northwest
 			temp2 = bitPiece;
 			temp = bitPiece;
-			c = piece.getCol();
+			c = col;
 			attackVector = 0;
 
 			while ((temp2 = (temp2 >>> 9 & left)) != 0) {
@@ -284,8 +281,8 @@ public class Queen {
 			// south west
 			temp = bitPiece;
 			temp2 = bitPiece;
-			r = piece.getRow();
-			c = piece.getCol();
+			r = row;
+			c = col;
 			attackVector = 0;
 
 			while ((temp2 = (temp2 << 7 & left)) != 0) {
@@ -322,8 +319,8 @@ public class Queen {
 			// east
 			temp = bitPiece;
 			temp2 = bitPiece;
-			r = piece.getRow();
-			c = piece.getCol();
+			r = row;
+			c = col;
 			attackVector = 0;
 
 			while ((temp2 = (temp2 << 1 & right)) != 0) {
@@ -354,7 +351,7 @@ public class Queen {
 			// northeast
 			temp = bitPiece;
 			temp2 = bitPiece;
-			c = piece.getCol();
+			c = col;
 			attackVector = 0;
 
 			while ((temp2 = (temp2 >> 7 & right)) != 0) {
@@ -386,8 +383,8 @@ public class Queen {
 			// southeast
 			temp = bitPiece;
 			temp2 = bitPiece;
-			c = piece.getCol();
-			r = piece.getRow();
+			c = col;
+			r = row;
 			attackVector = 0;
 
 			while ((temp2 = (temp2 << 9 & right)) != 0) {
@@ -420,25 +417,22 @@ public class Queen {
 
 	}
 
-	public static void getNullMoveInfo(Piece p, Board board, long[] nullMoveInfo) {
+	public void getNullMoveInfo(Board board, long[] nullMoveInfo) {
 		long bitAttackVector = 0;
 		long bitAttackCompliment = 0;
 		boolean inCheck = false;
 		Piece blockingPiece;
 
-		int currentRow = p.getRow();
-		int currentCol = p.getCol();
 		int nextRow;
 		int nextCol;
 		PositionStatus pieceStatus;
-		Side player = p.getSide();
 
-		long bitPosition = p.getBit();
+		long bitPosition = getBit();
 
 		int i = 1;
 		for (int d = 0; d < 8; d++) {
-			nextRow = currentRow + i * QUEENMOVES[0][d];
-			nextCol = currentCol + i * QUEENMOVES[1][d];
+			nextRow = row + i * QUEENMOVES[0][d];
+			nextCol = col + i * QUEENMOVES[1][d];
 			pieceStatus = board.checkPiece(nextRow, nextCol, player);
 
 			if (pieceStatus == PositionStatus.OFF_BOARD) {
@@ -448,8 +442,8 @@ public class Queen {
 			while (pieceStatus == PositionStatus.NO_PIECE) {
 				bitAttackVector |= BitBoard.getMask(nextRow, nextCol);
 				i++;
-				nextRow = currentRow + i * QUEENMOVES[0][d];
-				nextCol = currentCol + i * QUEENMOVES[1][d];
+				nextRow = row + i * QUEENMOVES[0][d];
+				nextCol = col + i * QUEENMOVES[1][d];
 				pieceStatus = board.checkPiece(nextRow, nextCol, player);
 			}
 
@@ -467,15 +461,15 @@ public class Queen {
 				}
 
 				i++;
-				nextRow = currentRow + i * QUEENMOVES[0][d];
-				nextCol = currentCol + i * QUEENMOVES[1][d];
+				nextRow = row + i * QUEENMOVES[0][d];
+				nextCol = col + i * QUEENMOVES[1][d];
 				pieceStatus = board.checkPiece(nextRow, nextCol, player);
 
 				while (pieceStatus == PositionStatus.NO_PIECE) {
 					bitAttackCompliment |= BitBoard.getMask(nextRow, nextCol);
 					i++;
-					nextRow = currentRow + i * QUEENMOVES[0][d];
-					nextCol = currentCol + i * QUEENMOVES[1][d];
+					nextRow = row + i * QUEENMOVES[0][d];
+					nextCol = col + i * QUEENMOVES[1][d];
 					pieceStatus = board.checkPiece(nextRow, nextCol, player);
 				}
 
@@ -504,6 +498,11 @@ public class Queen {
 			i = 1;
 		}
 
+	}
+
+	@Override
+	public Piece getCopy() {
+		return new Queen(id, player, row, col, moved);
 	}
 
 }

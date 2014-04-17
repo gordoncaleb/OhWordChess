@@ -20,20 +20,21 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import com.gordoncaleb.client.chess.Board;
+import com.gordoncaleb.client.chess.BoardMaker;
+import com.gordoncaleb.client.chess.Move;
+import com.gordoncaleb.client.chess.Side;
+import com.gordoncaleb.client.pieces.PositionBonus;
+
 import chessAI.AI;
 import chessAI.AISettings;
-import chessBackend.Board;
-import chessBackend.BoardMaker;
 import chessBackend.Game;
+import chessBackend.Game.GameStatus;
 import chessBackend.GameResults;
-import chessBackend.GameStatus;
-import chessBackend.Move;
 import chessBackend.Player;
 import chessBackend.PlayerContainer;
-import chessBackend.Side;
 import chessIO.FileIO;
 import chessIO.XMLParser;
-import chessPieces.PositionBonus;
 
 public class PlayerGUI implements Player, BoardGUI, MouseListener {
 	private JFrame frame;

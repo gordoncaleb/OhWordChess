@@ -3,15 +3,16 @@ package chessAI;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import chessBackend.Board;
+import com.gordoncaleb.client.chess.Board;
+import com.gordoncaleb.client.chess.Move;
+import com.gordoncaleb.client.pieces.Values;
+
 import chessBackend.BoardHashEntry;
-import chessBackend.GameStatus;
+import chessBackend.Game.GameStatus;
 import chessBackend.Player;
 import chessBackend.PlayerContainer;
-import chessBackend.Move;
 import chessIO.FileIO;
 import chessIO.MoveBook;
-import chessPieces.Values;
 
 public class AI extends Thread implements Player {
 	// public static String version = AISettings.version;

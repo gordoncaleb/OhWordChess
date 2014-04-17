@@ -13,9 +13,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import com.gordoncaleb.client.chess.Board;
+import com.gordoncaleb.client.chess.Move;
+
 import chessAI.AI;
-import chessBackend.Board;
-import chessBackend.Move;
 
 public class PossibleBoardDisplay implements MouseListener {
 

@@ -19,19 +19,20 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
+import com.gordoncaleb.client.chess.Board;
+import com.gordoncaleb.client.chess.BoardMaker;
+import com.gordoncaleb.client.chess.Move;
+import com.gordoncaleb.client.chess.Side;
+import com.gordoncaleb.client.pieces.PositionBonus;
+
 import chessAI.AI;
-import chessBackend.Board;
-import chessBackend.BoardMaker;
 import chessBackend.Game;
-import chessBackend.GameStatus;
-import chessBackend.Move;
+import chessBackend.Game.GameStatus;
 import chessBackend.Player;
 import chessBackend.PlayerContainer;
-import chessBackend.Side;
 import chessIO.FileIO;
 import chessIO.MoveBook;
 import chessIO.XMLParser;
-import chessPieces.PositionBonus;
 
 public class MoveBookBuilderGUI implements Player, BoardGUI, MouseListener {
 	private JFrame frame;

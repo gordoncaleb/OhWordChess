@@ -2,6 +2,9 @@ package chessBackend;
 
 import java.util.ArrayList;
 
+import com.gordoncaleb.client.chess.Board;
+import com.gordoncaleb.client.chess.BoardMaker;
+
 import chessAI.AI;
 
 public class Perft {

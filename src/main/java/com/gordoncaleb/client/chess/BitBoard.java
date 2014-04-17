@@ -1,6 +1,5 @@
-package chessBackend;
+package com.gordoncaleb.client.chess;
 
-import chessPieces.PieceID;
 
 public class BitBoard {
 

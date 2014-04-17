@@ -1,20 +1,33 @@
-package com.gordoncaleb.client;
+package com.gordoncaleb.client.shapes;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
+import com.gordoncaleb.client.Drawable;
+import com.gordoncaleb.client.util.CanvasUtils;
 
 public class Rectangle implements Drawable {
 
 	private CssColor fillColor = CanvasUtils.getRandomCssColor();
+	private CssColor strokeColor = CanvasUtils.getRandomCssColor();
 	private int x, y, width, height;
 
-	public Rectangle(CssColor fillColor, int x, int y, int width, int height) {
+	public Rectangle(CssColor fillColor, CssColor strokeColor, int x, int y,
+			int width, int height) {
 		super();
 		this.fillColor = fillColor;
+		this.strokeColor = strokeColor;
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
+	}
+
+	public CssColor getStrokeColor() {
+		return strokeColor;
+	}
+
+	public void setStrokeColor(CssColor strokeColor) {
+		this.strokeColor = strokeColor;
 	}
 
 	public CssColor getFillColor() {
@@ -61,6 +74,7 @@ public class Rectangle implements Drawable {
 		context.save();
 		context.setFillStyle(fillColor);
 		context.fillRect(x, y, width, height);
+		context.setStrokeStyle(strokeColor);
 		context.strokeRect(x, y, width, height);
 		context.restore();
 	}

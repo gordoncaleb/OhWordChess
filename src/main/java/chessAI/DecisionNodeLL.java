@@ -1,11 +1,9 @@
 package chessAI;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
-import chessBackend.MoveNote;
-import chessBackend.Move;
+import com.gordoncaleb.client.chess.Move;
 
 public class DecisionNodeLL {
 

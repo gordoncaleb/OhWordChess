@@ -1,5 +1,8 @@
 package chessBackend;
 
+import com.gordoncaleb.client.chess.Board;
+import com.gordoncaleb.client.chess.Side;
+
 public interface PlayerContainer {
 
 	public boolean makeMove(long move);

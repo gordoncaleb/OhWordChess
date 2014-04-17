@@ -17,11 +17,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import chessBackend.Board;
-import chessBackend.Move;
-import chessBackend.MoveNote;
-import chessBackend.Side;
-import chessPieces.Piece;
+import com.gordoncaleb.client.chess.Board;
+import com.gordoncaleb.client.chess.Move;
+import com.gordoncaleb.client.chess.Move.MoveNote;
+import com.gordoncaleb.client.chess.Side;
+import com.gordoncaleb.client.pieces.Piece;
+import com.gordoncaleb.client.pieces.PieceUtils;
 
 public class XMLParser {
 
@@ -58,7 +59,7 @@ public class XMLParser {
 			for (int col = 0; col < 8; col++) {
 
 				stringPiece = stringPieces[8 * row + col].trim();
-				piece = Piece.fromString(stringPiece, row, col);
+				piece = PieceUtils.fromString(stringPiece, row, col);
 
 				if (piece != null) {
 					pieces[piece.getSide().ordinal()].add(piece);
@@ -118,7 +119,7 @@ public class XMLParser {
 		int row = Integer.parseInt(position[0].trim());
 		int col = Integer.parseInt(position[1].trim());
 
-		return Piece.fromString(id, row, col);
+		return PieceUtils.fromString(id, row, col);
 	}
 
 	public static long XMLToMove(String xmlMove) {

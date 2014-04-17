@@ -1,6 +1,6 @@
-package chessPieces;
+package com.gordoncaleb.client.pieces;
 
-import chessBackend.Side;
+import com.gordoncaleb.client.chess.Side;
 
 public class PositionBonus {
 	private static int[][] knightBonus = 

@@ -1,5 +1,9 @@
 package chessBackend;
 
+import chessBackend.Game.GameStatus;
+
+import com.gordoncaleb.client.chess.Board;
+
 public interface Player {
 
 	public long undoMove();

@@ -16,11 +16,12 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
+import com.gordoncaleb.client.pieces.Values;
+
 import chessAI.AI;
 import chessAI.DecisionNode;
 import chessBackend.Game;
 import chessBackend.Player;
-import chessPieces.Values;
 
 public class DecisionTreeGUI implements KeyListener, MouseListener {
 	Player gui;

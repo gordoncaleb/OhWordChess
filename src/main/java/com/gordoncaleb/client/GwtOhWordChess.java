@@ -10,6 +10,8 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Touch;
 import com.google.gwt.event.dom.client.GestureStartEvent;
 import com.google.gwt.event.dom.client.GestureStartHandler;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
@@ -21,6 +23,7 @@ import com.google.gwt.event.dom.client.TouchMoveHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.gordoncaleb.client.util.CanvasUtils;
 
 public class GwtOhWordChess implements EntryPoint {
 
@@ -42,10 +45,9 @@ public class GwtOhWordChess implements EntryPoint {
 	Context2d context;
 	Context2d backBufferContext;
 
-	Layer boardLayer;
-	Layer piecesLayer;
-
 	List<Drawable> layers = new ArrayList<Drawable>();
+
+	ChessBoardLayer board;
 
 	@Override
 	public void onModuleLoad() {
@@ -72,8 +74,10 @@ public class GwtOhWordChess implements EntryPoint {
 
 		// init the objects
 
-		layers.add(new ChessBoardLayer(width, height, CanvasUtils
-				.getRandomCssColor(), CanvasUtils.getRandomCssColor()));
+		board = new ChessBoardLayer(width, height, CanvasUtils.LIGHTBROWN,
+				CanvasUtils.DARKBROWN);
+
+		layers.add(board);
 
 		// init handlers
 		initHandlers();
@@ -102,6 +106,9 @@ public class GwtOhWordChess implements EntryPoint {
 	}
 
 	void initHandlers() {
+		canvas.addMouseDownHandler(board);
+		canvas.addMouseMoveHandler(board);
+
 		canvas.addMouseMoveHandler(new MouseMoveHandler() {
 			public void onMouseMove(MouseMoveEvent event) {
 				mouseX = event.getRelativeX(canvas.getElement());

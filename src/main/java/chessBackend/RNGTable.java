@@ -3,7 +3,8 @@ package chessBackend;
 import java.security.SecureRandom;
 import java.util.Random;
 
-import chessPieces.PieceID;
+import com.gordoncaleb.client.chess.Side;
+import com.gordoncaleb.client.pieces.Piece.PieceID;
 
 public class RNGTable {
 	private static final byte[] seed = { -52, 45, -101, 26, -51, -99, -84, -79 };
@@ -12,7 +13,7 @@ public class RNGTable {
 	private long blackToMove;
 	private long[][][][] castlingRights;
 	private long[] enPassantFile;
-	
+
 	private static RNGTable singleton;
 
 	public RNGTable() {
@@ -30,9 +31,9 @@ public class RNGTable {
 			System.out.println(rngTable.randomLong() + "");
 		}
 	}
-	
-	public static RNGTable getSingleton(){
-		if(singleton == null){
+
+	public static RNGTable getSingleton() {
+		if (singleton == null) {
 			singleton = new RNGTable();
 		}
 		return singleton;
@@ -59,7 +60,8 @@ public class RNGTable {
 		}
 	}
 
-	public long getPiecePerSquareRandom(Side player, PieceID id, int row, int col) {
+	public long getPiecePerSquareRandom(Side player, PieceID id, int row,
+			int col) {
 		return piecePerSquare[player.ordinal()][id.ordinal()][row][col];
 	}
 
@@ -86,8 +88,9 @@ public class RNGTable {
 		}
 	}
 
-	public long getCastlingRightsRandom(boolean blackFarRook, boolean blackNearRook, boolean blackKing, boolean whiteFarRook, boolean whiteNearRook,
-			boolean whiteKing) {
+	public long getCastlingRightsRandom(boolean blackFarRook,
+			boolean blackNearRook, boolean blackKing, boolean whiteFarRook,
+			boolean whiteNearRook, boolean whiteKing) {
 
 		int blackLeft = 0;
 		int blackRight = 0;
@@ -102,8 +105,8 @@ public class RNGTable {
 				blackRight = 1;
 			}
 		}
-		
-		if(!whiteKing){
+
+		if (!whiteKing) {
 			if (!whiteFarRook) {
 				whiteLeft = 1;
 			}

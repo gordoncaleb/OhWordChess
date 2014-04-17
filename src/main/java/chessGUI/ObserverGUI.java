@@ -10,12 +10,13 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import chessBackend.Board;
-import chessBackend.GameStatus;
-import chessBackend.Move;
+import com.gordoncaleb.client.chess.Board;
+import com.gordoncaleb.client.chess.Move;
+import com.gordoncaleb.client.chess.Side;
+
+import chessBackend.Game.GameStatus;
 import chessBackend.Player;
 import chessBackend.PlayerContainer;
-import chessBackend.Side;
 import chessIO.FileIO;
 
 public class ObserverGUI implements Player, BoardGUI, MouseListener {

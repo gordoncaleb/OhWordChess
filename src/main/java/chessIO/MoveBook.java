@@ -9,9 +9,9 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import chessBackend.Board;
-import chessBackend.BoardMaker;
-import chessBackend.Move;
+import com.gordoncaleb.client.chess.Board;
+import com.gordoncaleb.client.chess.BoardMaker;
+import com.gordoncaleb.client.chess.Move;
 
 public class MoveBook {
 

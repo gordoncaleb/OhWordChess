@@ -2,12 +2,13 @@ package chessAI;
 
 import java.util.ArrayList;
 
-import chessBackend.Board;
-import chessBackend.GameStatus;
+import com.gordoncaleb.client.chess.Board;
+import com.gordoncaleb.client.chess.Move;
+import com.gordoncaleb.client.pieces.Values;
+
 import chessBackend.BoardHashEntry;
-import chessBackend.Move;
+import chessBackend.Game.GameStatus;
 import chessBackend.ValueBounds;
-import chessPieces.Values;
 
 public class AIProcessor extends Thread {
 	private DecisionNode rootNode;

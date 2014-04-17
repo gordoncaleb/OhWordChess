@@ -1,5 +1,9 @@
 package chessBackend;
 
+import chessBackend.Game.GameStatus;
+
+import com.gordoncaleb.client.chess.Side;
+
 public class GameResults {
 
 	private Side winner;

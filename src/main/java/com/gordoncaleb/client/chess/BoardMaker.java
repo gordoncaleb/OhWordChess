@@ -1,10 +1,12 @@
-package chessBackend;
+package com.gordoncaleb.client.chess;
 
 import java.util.ArrayList;
 import java.util.Stack;
 
-import chessPieces.Piece;
-import chessPieces.PieceID;
+import com.gordoncaleb.client.pieces.Pawn;
+import com.gordoncaleb.client.pieces.Piece;
+import com.gordoncaleb.client.pieces.Piece.PieceID;
+import com.gordoncaleb.client.pieces.PieceUtils;
 
 public class BoardMaker {
 
@@ -13,7 +15,7 @@ public class BoardMaker {
 	 */
 	public static void main(String[] args) {
 		System.out.println(BoardMaker.getRandomChess960Board().toString());
-		
+
 		System.out.println(BoardMaker.getStandardChessBoard().toString());
 
 	}
@@ -46,7 +48,7 @@ public class BoardMaker {
 		Piece temp;
 		for (int s = 0; s < 2; s++) {
 			for (int p = 0; p < 8; p++) {
-				temp = new Piece(PieceID.PAWN, Side.values()[s], pawnRow[s], p, false);
+				temp = new Pawn(PieceID.PAWN, Side.values()[s], pawnRow[s], p, false);
 				pieces[s].add(temp);
 			}
 		}
@@ -68,7 +70,7 @@ public class BoardMaker {
 
 		for (int s = 0; s < 2; s++) {
 			for (int p = 0; p < 8; p++) {
-				temp = new Piece(setup[p], Side.values()[s], mainRow[s], p, false);
+				temp = PieceUtils.buildPiece(setup[p], Side.values()[s], mainRow[s], p, false);
 				pieces[s].add(temp);
 			}
 		}

@@ -8,14 +8,15 @@ import java.util.Hashtable;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
 
+import com.gordoncaleb.client.chess.Board;
+import com.gordoncaleb.client.chess.BoardMaker;
+import com.gordoncaleb.client.chess.Side;
+
 import chessAI.AI;
-import chessBackend.Board;
-import chessBackend.BoardMaker;
 import chessBackend.Game;
+import chessBackend.Game.GameStatus;
 import chessBackend.GameResults;
-import chessBackend.GameStatus;
 import chessBackend.Player;
-import chessBackend.Side;
 import chessEthernet.EthernetPlayerClient;
 import chessIO.FileIO;
 

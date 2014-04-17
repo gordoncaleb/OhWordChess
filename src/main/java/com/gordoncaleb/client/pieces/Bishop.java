@@ -1,88 +1,92 @@
-package chessPieces;
+package com.gordoncaleb.client.pieces;
 
 import java.util.ArrayList;
 
-import chessBackend.BitBoard;
-import chessBackend.Board;
-import chessBackend.MoveNote;
-import chessBackend.Side;
-import chessBackend.Move;
+import com.gordoncaleb.client.chess.BitBoard;
+import com.gordoncaleb.client.chess.Board;
+import com.gordoncaleb.client.chess.Move;
+import com.gordoncaleb.client.chess.Move.MoveNote;
+import com.gordoncaleb.client.chess.Side;
 
-public class Bishop {
-	private static final int[][] BISHOPMOVES = { { 1, 1, -1, -1 }, { 1, -1, 1, -1 } };
+public class Bishop extends Piece {
+	private static final int[][] BISHOPMOVES = { { 1, 1, -1, -1 },
+			{ 1, -1, 1, -1 } };
 
-	public Bishop() {
+	public Bishop(PieceID id, Side player, int row, int col, boolean moved) {
+		super(id, player, row, col, moved);
 	}
 
-	public static PieceID getPieceID() {
+	public PieceID getPieceID() {
 		return PieceID.BISHOP;
 	}
 
-	public static String getName() {
+	public String getName() {
 		return "Bishop";
 	}
 
-	public static String getStringID() {
+	public String getStringID() {
 		return "B";
 	}
 
-	public static void generateMoves(Piece p, Board board, ArrayList<Long> moves) {
-		int currentRow = p.getRow();
-		int currentCol = p.getCol();
+	// public void generateMoves(Piece p, Board board, ArrayList<Long> moves) {
+	// int currentRow = p.getRow();
+	// int currentCol = p.getCol();
+	// int nextRow;
+	// int nextCol;
+	// Long moveLong;
+	// int value;
+	// PositionStatus pieceStatus;
+	// Side player = p.getSide();
+	//
+	// int i = 1;
+	// for (int d = 0; d < 4; d++) {
+	// nextRow = currentRow + i * BISHOPMOVES[0][d];
+	// nextCol = currentCol + i * BISHOPMOVES[1][d];
+	// pieceStatus = board.checkPiece(nextRow, nextCol, player);
+	//
+	// while (pieceStatus == PositionStatus.NO_PIECE) {
+	//
+	// moveLong = Move.moveLong(currentRow, currentCol, nextRow,
+	// nextCol, 0, MoveNote.NONE);
+	// moves.add(moveLong);
+	//
+	// i++;
+	// nextRow = currentRow + i * BISHOPMOVES[0][d];
+	// nextCol = currentCol + i * BISHOPMOVES[1][d];
+	// pieceStatus = board.checkPiece(nextRow, nextCol, player);
+	//
+	// }
+	//
+	// if (pieceStatus == PositionStatus.ENEMY) {
+	// value = board.getPieceValue(nextRow, nextCol);
+	// moveLong = Move.moveLong(currentRow, currentCol, nextRow,
+	// nextCol, value, MoveNote.NONE,
+	// board.getPiece(nextRow, nextCol));
+	// moves.add(moveLong);
+	// }
+	//
+	// i = 1;
+	// }
+	// }
+
+	public void generateValidMoves(Board board, long[] nullMoveInfo,
+			long[] posBitBoard, ArrayList<Long> validMoves) {
+
 		int nextRow;
 		int nextCol;
 		Long moveLong;
 		int value;
 		PositionStatus pieceStatus;
-		Side player = p.getSide();
 
 		int i = 1;
 		for (int d = 0; d < 4; d++) {
-			nextRow = currentRow + i * BISHOPMOVES[0][d];
-			nextCol = currentCol + i * BISHOPMOVES[1][d];
+			nextRow = row + i * BISHOPMOVES[0][d];
+			nextCol = col + i * BISHOPMOVES[1][d];
 			pieceStatus = board.checkPiece(nextRow, nextCol, player);
 
 			while (pieceStatus == PositionStatus.NO_PIECE) {
 
-				moveLong = Move.moveLong(currentRow, currentCol, nextRow, nextCol, 0, MoveNote.NONE);
-				moves.add(moveLong);
-
-				i++;
-				nextRow = currentRow + i * BISHOPMOVES[0][d];
-				nextCol = currentCol + i * BISHOPMOVES[1][d];
-				pieceStatus = board.checkPiece(nextRow, nextCol, player);
-
-			}
-
-			if (pieceStatus == PositionStatus.ENEMY) {
-				value = board.getPieceValue(nextRow, nextCol);
-				moveLong = Move.moveLong(currentRow, currentCol, nextRow, nextCol, value, MoveNote.NONE, board.getPiece(nextRow, nextCol));
-				moves.add(moveLong);
-			}
-
-			i = 1;
-		}
-	}
-
-	public static ArrayList<Long> generateValidMoves(Piece p, Board board, long[] nullMoveInfo, long[] posBitBoard, ArrayList<Long> validMoves) {
-		int currentRow = p.getRow();
-		int currentCol = p.getCol();
-		int nextRow;
-		int nextCol;
-		Long moveLong;
-		int value;
-		PositionStatus pieceStatus;
-		Side player = p.getSide();
-
-		int i = 1;
-		for (int d = 0; d < 4; d++) {
-			nextRow = currentRow + i * BISHOPMOVES[0][d];
-			nextCol = currentCol + i * BISHOPMOVES[1][d];
-			pieceStatus = board.checkPiece(nextRow, nextCol, player);
-
-			while (pieceStatus == PositionStatus.NO_PIECE) {
-
-				if (p.isValidMove(nextRow, nextCol, nullMoveInfo)) {
+				if (isValidMove(nextRow, nextCol, nullMoveInfo)) {
 
 					if ((nullMoveInfo[0] & BitBoard.getMask(nextRow, nextCol)) != 0) {
 						value = -Values.BISHOP_VALUE >> 1;
@@ -90,27 +94,29 @@ public class Bishop {
 						value = 0;
 					}
 
-					moveLong = Move.moveLong(currentRow, currentCol, nextRow, nextCol, value, MoveNote.NONE);
+					moveLong = Move.moveLong(row, col, nextRow, nextCol, value,
+							MoveNote.NONE);
 
 					validMoves.add(moveLong);
 				}
 
 				i++;
-				nextRow = currentRow + i * BISHOPMOVES[0][d];
-				nextCol = currentCol + i * BISHOPMOVES[1][d];
+				nextRow = row + i * BISHOPMOVES[0][d];
+				nextCol = col + i * BISHOPMOVES[1][d];
 				pieceStatus = board.checkPiece(nextRow, nextCol, player);
 
 			}
 
 			if (pieceStatus == PositionStatus.ENEMY) {
-				if (p.isValidMove(nextRow, nextCol, nullMoveInfo)) {
+				if (isValidMove(nextRow, nextCol, nullMoveInfo)) {
 					value = board.getPieceValue(nextRow, nextCol);
 
 					if ((nullMoveInfo[0] & BitBoard.getMask(nextRow, nextCol)) != 0) {
 						value -= Values.BISHOP_VALUE >> 1;
 					}
 
-					moveLong = Move.moveLong(currentRow, currentCol, nextRow, nextCol, value, MoveNote.NONE, board.getPiece(nextRow, nextCol));
+					moveLong = Move.moveLong(row, col, nextRow, nextCol, value,
+							MoveNote.NONE, board.getPiece(nextRow, nextCol));
 					validMoves.add(moveLong);
 				}
 			}
@@ -118,23 +124,21 @@ public class Bishop {
 			i = 1;
 		}
 
-		return validMoves;
-
 	}
-	
-	public static void getNullMoveInfo(Piece piece, Board board, long[] nullMoveInfo, long updown, long left, long right, long kingBitBoard, long kingCheckVectors,
+
+	public void getNullMoveInfo(Board board, long[] nullMoveInfo, long updown,
+			long left, long right, long kingBitBoard, long kingCheckVectors,
 			long friendly) {
 
-		long bitPiece = piece.getBit();
+		long bitPiece = getBit();
 
 		// up ------------------------------------------------------------
 		long temp = bitPiece;
 		long temp2 = bitPiece;
-		int r = piece.getRow();
-		int c = piece.getCol();
+		int r = row;
+		int c = col;
 		long attackVector = 0;
 
-		
 		// going westward -----------------------------------------------------
 		if ((bitPiece & 0x0101010101010101L) == 0) {
 
@@ -158,7 +162,8 @@ public class Bishop {
 					if ((temp & friendly) != 0) {
 						temp = temp >>> 9;
 						if ((temp & kingCheckVectors) != 0) {
-							board.getPiece(r - 1, c - 1).setBlockingVector(BitBoard.getNegSlope(r, c));
+							board.getPiece(r - 1, c - 1).setBlockingVector(
+									BitBoard.getNegSlope(r, c));
 						}
 					}
 				}
@@ -167,8 +172,8 @@ public class Bishop {
 			// south west
 			temp = bitPiece;
 			temp2 = bitPiece;
-			r = piece.getRow();
-			c = piece.getCol();
+			r = row;
+			c = col;
 			attackVector = 0;
 
 			while ((temp2 = (temp2 << 7 & left)) != 0) {
@@ -191,7 +196,8 @@ public class Bishop {
 					if ((temp & friendly) != 0) {
 						temp = temp << 7;
 						if ((temp & kingCheckVectors) != 0) {
-							board.getPiece(r + 1, c - 1).setBlockingVector(BitBoard.getPosSlope(r, c));
+							board.getPiece(r + 1, c - 1).setBlockingVector(
+									BitBoard.getPosSlope(r, c));
 						}
 					}
 				}
@@ -205,8 +211,8 @@ public class Bishop {
 			// northeast
 			temp = bitPiece;
 			temp2 = bitPiece;
-			c = piece.getCol();
-			r = piece.getRow();
+			c = col;
+			r = row;
 			attackVector = 0;
 
 			while ((temp2 = (temp2 >> 7 & right)) != 0) {
@@ -229,7 +235,8 @@ public class Bishop {
 					if ((temp & friendly) != 0) {
 						temp = temp >> 7;
 						if ((temp & kingCheckVectors) != 0) {
-							board.getPiece(r - 1, c + 1).setBlockingVector(BitBoard.getPosSlope(r, c));
+							board.getPiece(r - 1, c + 1).setBlockingVector(
+									BitBoard.getPosSlope(r, c));
 						}
 					}
 				}
@@ -238,8 +245,8 @@ public class Bishop {
 			// southeast
 			temp = bitPiece;
 			temp2 = bitPiece;
-			c = piece.getCol();
-			r = piece.getRow();
+			c = col;
+			r = row;
 			attackVector = 0;
 
 			while ((temp2 = (temp2 << 9 & right)) != 0) {
@@ -262,7 +269,8 @@ public class Bishop {
 					if ((temp & friendly) != 0) {
 						temp = temp << 9;
 						if ((temp & kingCheckVectors) != 0) {
-							board.getPiece(r + 1, c + 1).setBlockingVector(BitBoard.getNegSlope(r, c));
+							board.getPiece(r + 1, c + 1).setBlockingVector(
+									BitBoard.getNegSlope(r, c));
 						}
 					}
 				}
@@ -272,25 +280,22 @@ public class Bishop {
 
 	}
 
-	public static void getNullMoveInfo(Piece p, Board board, long[] nullMoveInfo) {
+	public void getNullMoveInfo(Board board, long[] nullMoveInfo) {
 		long bitAttackVector = 0;
 		long bitAttackCompliment = 0;
 		boolean inCheck = false;
 		Piece blockingPiece;
 
-		int currentRow = p.getRow();
-		int currentCol = p.getCol();
 		int nextRow;
 		int nextCol;
 		PositionStatus pieceStatus;
-		Side player = p.getSide();
 
-		long bitPosition = p.getBit();
+		long bitPosition = getBit();
 
 		int i = 1;
 		for (int d = 0; d < 4; d++) {
-			nextRow = currentRow + i * BISHOPMOVES[0][d];
-			nextCol = currentCol + i * BISHOPMOVES[1][d];
+			nextRow = row + i * BISHOPMOVES[0][d];
+			nextCol = col + i * BISHOPMOVES[1][d];
 			pieceStatus = board.checkPiece(nextRow, nextCol, player);
 
 			if (pieceStatus == PositionStatus.OFF_BOARD) {
@@ -300,8 +305,8 @@ public class Bishop {
 			while (pieceStatus == PositionStatus.NO_PIECE) {
 				bitAttackVector |= BitBoard.getMask(nextRow, nextCol);
 				i++;
-				nextRow = currentRow + i * BISHOPMOVES[0][d];
-				nextCol = currentCol + i * BISHOPMOVES[1][d];
+				nextRow = row + i * BISHOPMOVES[0][d];
+				nextCol = col + i * BISHOPMOVES[1][d];
 				pieceStatus = board.checkPiece(nextRow, nextCol, player);
 			}
 
@@ -318,21 +323,23 @@ public class Bishop {
 				}
 
 				i++;
-				nextRow = currentRow + i * BISHOPMOVES[0][d];
-				nextCol = currentCol + i * BISHOPMOVES[1][d];
+				nextRow = row + i * BISHOPMOVES[0][d];
+				nextCol = col + i * BISHOPMOVES[1][d];
 				pieceStatus = board.checkPiece(nextRow, nextCol, player);
 
 				while (pieceStatus == PositionStatus.NO_PIECE) {
 					bitAttackCompliment |= BitBoard.getMask(nextRow, nextCol);
 					i++;
-					nextRow = currentRow + i * BISHOPMOVES[0][d];
-					nextCol = currentCol + i * BISHOPMOVES[1][d];
+					nextRow = row + i * BISHOPMOVES[0][d];
+					nextCol = col + i * BISHOPMOVES[1][d];
 					pieceStatus = board.checkPiece(nextRow, nextCol, player);
 				}
 
 				if (pieceStatus != PositionStatus.OFF_BOARD) {
-					if (board.getPieceID(nextRow, nextCol) == PieceID.KING && board.getPiece(nextRow, nextCol).getSide() != player) {
-						blockingPiece.setBlockingVector(bitAttackCompliment | bitAttackVector | bitPosition);
+					if (board.getPieceID(nextRow, nextCol) == PieceID.KING
+							&& board.getPiece(nextRow, nextCol).getSide() != player) {
+						blockingPiece.setBlockingVector(bitAttackCompliment
+								| bitAttackVector | bitPosition);
 					}
 				}
 
@@ -355,6 +362,11 @@ public class Bishop {
 			i = 1;
 		}
 
+	}
+
+	@Override
+	public Piece getCopy() {
+		return new Bishop(id, player, row, col, moved);
 	}
 
 }

@@ -1,9 +1,14 @@
-package chessBackend;
+package com.gordoncaleb.client.chess;
 
-import chessPieces.Piece;
-import chessPieces.PieceID;
+import com.gordoncaleb.client.pieces.Piece;
+import com.gordoncaleb.client.pieces.Piece.PieceID;
+import com.gordoncaleb.client.pieces.PieceUtils;
 
 public class Move {
+
+	public static enum MoveNote {
+		NONE, CASTLE_NEAR, CASTLE_FAR, NEW_QUEEN, ENPASSANT, PAWN_LEAP
+	}
 
 	/**
 	 * Bit-field 0-2 = toCol 3-5 = toRow 6-8 = fromCol 9-11 = fromRow 12-14 =
@@ -31,10 +36,9 @@ public class Move {
 
 		for (int i = 0; i < 2000000; i++) {
 			moveLong = Move.moveLong(1, 2, 3, 4, i, MoveNote.NONE, null, true);
-			
-			//moveLong = Move.setValue(moveLong, -i);
-			
-			
+
+			// moveLong = Move.setValue(moveLong, -i);
+
 			if (Move.getValue(moveLong) != i) {
 				System.out.println("problem at " + i + "!=" + Move.getValue(moveLong));
 				System.out.println("it is 0x" + Integer.toHexString(Move.getValue(moveLong)));
@@ -216,7 +220,7 @@ public class Move {
 	public static String toString(long moveLong) {
 		String moveString;
 		if (hasPieceTaken(moveLong)) {
-			Piece pieceTaken = new Piece(getPieceTakenID(moveLong), null, getPieceTakenRow(moveLong), getPieceTakenCol(moveLong),
+			Piece pieceTaken = PieceUtils.buildPiece(getPieceTakenID(moveLong), null, getPieceTakenRow(moveLong), getPieceTakenCol(moveLong),
 					getPieceTakenHasMoved(moveLong));
 			moveString = "Moving from " + getFromRow(moveLong) + "," + getFromCol(moveLong) + " to " + getToRow(moveLong) + "," + getToCol(moveLong)
 					+ " Move Note: " + getNote(moveLong).toString() + " Value:" + getValue(moveLong) + " PieceTaken: " + pieceTaken.toString();
@@ -249,7 +253,7 @@ public class Move {
 		}
 
 		if (hasPieceTaken(moveLong)) {
-			xmlMove += new Piece(getPieceTakenID(moveLong), null, getPieceTakenRow(moveLong), getPieceTakenCol(moveLong),
+			xmlMove += PieceUtils.buildPiece(getPieceTakenID(moveLong), null, getPieceTakenRow(moveLong), getPieceTakenCol(moveLong),
 					getPieceTakenHasMoved(moveLong)).toXML();
 		}
 
@@ -329,7 +333,7 @@ public class Move {
 
 	public static long setValue(long moveLong, int value) {
 		moveLong = moveLong & 0xFFFFFFFFL;
-		
+
 		moveLong |= ((long) value) << 32;
 
 		return moveLong;

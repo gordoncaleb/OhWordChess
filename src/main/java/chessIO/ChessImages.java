@@ -6,8 +6,8 @@ import java.awt.Toolkit;
 
 import javax.swing.ImageIcon;
 
-import chessBackend.Side;
-import chessPieces.PieceID;
+import com.gordoncaleb.client.chess.Side;
+import com.gordoncaleb.client.pieces.Piece.PieceID;
 
 public class ChessImages {
 

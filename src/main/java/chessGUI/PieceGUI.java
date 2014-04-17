@@ -1,7 +1,7 @@
 package chessGUI;
 
-import chessBackend.Side;
-import chessPieces.PieceID;
+import com.gordoncaleb.client.chess.Side;
+import com.gordoncaleb.client.pieces.Piece.PieceID;
 
 public interface PieceGUI {
 	public PieceID getPieceID();

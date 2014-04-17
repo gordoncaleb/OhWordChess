@@ -4,7 +4,13 @@ import java.util.ArrayList;
 import java.util.Stack;
 import java.util.Vector;
 
-import chessPieces.*;
+import chessBackend.Game.GameStatus;
+
+import com.gordoncaleb.client.chess.Board;
+import com.gordoncaleb.client.chess.Move;
+import com.gordoncaleb.client.chess.Side;
+import com.gordoncaleb.client.pieces.*;
+import com.gordoncaleb.client.pieces.Piece.PieceID;
 
 public class Adjudicator {
 	private ArrayList<Long> validMoves;

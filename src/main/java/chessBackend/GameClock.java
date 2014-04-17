@@ -2,6 +2,8 @@ package chessBackend;
 
 import java.util.Timer;
 
+import com.gordoncaleb.client.chess.Side;
+
 public class GameClock {
 	private long[] time;
 	private long startTime;

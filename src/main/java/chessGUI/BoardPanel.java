@@ -13,10 +13,17 @@ import java.util.Vector;
 import javax.swing.*;
 import javax.swing.border.Border;
 
+import com.gordoncaleb.client.chess.Board;
+import com.gordoncaleb.client.chess.Move;
+import com.gordoncaleb.client.chess.Move.MoveNote;
+import com.gordoncaleb.client.chess.Side;
+import com.gordoncaleb.client.pieces.Piece;
+import com.gordoncaleb.client.pieces.PieceUtils;
+import com.gordoncaleb.client.pieces.Piece.PieceID;
+
 import chessBackend.*;
+import chessBackend.Game.GameStatus;
 import chessIO.ChessImages;
-import chessPieces.Piece;
-import chessPieces.PieceID;
 
 public class BoardPanel extends JPanel implements MouseListener, ActionListener {
 
@@ -379,7 +386,7 @@ public class BoardPanel extends JPanel implements MouseListener, ActionListener 
 			SquarePanel toSqr = (SquarePanel) toComponent;
 			JPieceTakenLabel fromLbl = (JPieceTakenLabel) fromComponent;
 
-			Piece piece = new Piece(fromLbl.getPieceID(), fromLbl.getPlayer(), -1, -1, false);
+			Piece piece = PieceUtils.buildPiece(fromLbl.getPieceID(), fromLbl.getPlayer(), -1, -1, false);
 
 			if (adjudicator.placePiece(piece, flipTrans(toSqr.getRow()), flipTrans(toSqr.getCol()))) {
 				if (toSqr.getPieceID() != null) {
