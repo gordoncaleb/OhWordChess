@@ -40,7 +40,7 @@ public class Perft {
 		if (depth > 0) {
 			board.makeNullMove();
 			
-			ArrayList<Long> moves = new ArrayList<Long>(board.generateValidMoves(true, 0, AI.noKillerMoves));
+			ArrayList<Long> moves = new ArrayList<Long>(board.generateValidMoves(true, 0, Board.noKillerMoves));
 
 			for (int i = 0; i < moves.size(); i++) {
 				board.makeMove(moves.get(i));

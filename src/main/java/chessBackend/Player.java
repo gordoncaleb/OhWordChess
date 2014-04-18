@@ -1,8 +1,7 @@
 package chessBackend;
 
-import chessBackend.Game.GameStatus;
-
 import com.gordoncaleb.client.chess.Board;
+import com.gordoncaleb.client.chess.GameStatus;
 
 public interface Player {
 

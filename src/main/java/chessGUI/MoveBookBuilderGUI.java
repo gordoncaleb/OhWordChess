@@ -21,13 +21,13 @@ import javax.swing.ListSelectionModel;
 
 import com.gordoncaleb.client.chess.Board;
 import com.gordoncaleb.client.chess.BoardMaker;
+import com.gordoncaleb.client.chess.GameStatus;
 import com.gordoncaleb.client.chess.Move;
 import com.gordoncaleb.client.chess.Side;
 import com.gordoncaleb.client.pieces.PositionBonus;
 
 import chessAI.AI;
 import chessBackend.Game;
-import chessBackend.Game.GameStatus;
 import chessBackend.Player;
 import chessBackend.PlayerContainer;
 import chessIO.FileIO;

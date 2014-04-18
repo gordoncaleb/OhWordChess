@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.gordoncaleb.client.chess.Board;
+import com.gordoncaleb.client.chess.GameStatus;
 import com.gordoncaleb.client.chess.Move;
 import com.gordoncaleb.client.pieces.Values;
 
 import chessBackend.BoardHashEntry;
-import chessBackend.Game.GameStatus;
 import chessBackend.Player;
 import chessBackend.PlayerContainer;
 import chessIO.FileIO;
@@ -16,7 +16,6 @@ import chessIO.MoveBook;
 
 public class AI extends Thread implements Player {
 	// public static String version = AISettings.version;
-	public static long[] noKillerMoves = {};
 
 	// private boolean debug = AISettings.debugOutput;
 

@@ -3,11 +3,11 @@ package chessAI;
 import java.util.ArrayList;
 
 import com.gordoncaleb.client.chess.Board;
+import com.gordoncaleb.client.chess.GameStatus;
 import com.gordoncaleb.client.chess.Move;
 import com.gordoncaleb.client.pieces.Values;
 
 import chessBackend.BoardHashEntry;
-import chessBackend.Game.GameStatus;
 import chessBackend.ValueBounds;
 
 public class AIProcessor extends Thread {
@@ -201,7 +201,7 @@ public class AIProcessor extends Thread {
 		if (level >= 0) {
 			moves = board.generateValidMoves(true, hashMove, killerMoves[level]);
 		} else {
-			moves = board.generateValidMoves(true, hashMove, AI.noKillerMoves);
+			moves = board.generateValidMoves(true, hashMove, Board.noKillerMoves);
 		}
 
 		DecisionNode[] children = new DecisionNode[moves.size()];
@@ -280,20 +280,20 @@ public class AIProcessor extends Thread {
 		numSearched++;
 
 		if (branch.hasBeenVisited() && !branch.isGameOver()) {
-			
+
 			if ((Math.abs(branch.getChosenPathValue()) & Values.CHECKMATE_MASK) != 0) {
 				return;
 			}
-			
-//			if (branch.getHeadChild().isGameOver()) {
-//				//branch.setChosenPathValue(-branch.getHeadChild().getChosenPathValue());
-//				
-//			}
+
+			// if (branch.getHeadChild().isGameOver()) {
+			// //branch.setChosenPathValue(-branch.getHeadChild().getChosenPathValue());
+			//
+			// }
 		}
 
 		BoardHashEntry hashOut;
 		long hashMove = 0;
-		hashOut = hashTable[board.getHashIndex()];
+		hashOut = hashTable[(int) (board.getHashCode() & AISettings.hashIndexMask)];
 
 		if (AISettings.useHashTable) {
 
@@ -357,11 +357,11 @@ public class AIProcessor extends Thread {
 				if ((board.getBoardStatus() == GameStatus.CHECK) && (level > -AISettings.maxInCheckFrontierLevel)) {
 					bonusLevel = Math.min(bonusLevel, level - 2);
 				} else {
-//					if (board.canQueen()) {
-//						// System.out.println("Can Queen \n" +
-//						// board.toString());
-//						//bonusLevel = Math.min(bonusLevel, level - 1);
-//					}
+					// if (board.canQueen()) {
+					// // System.out.println("Can Queen \n" +
+					// // board.toString());
+					// //bonusLevel = Math.min(bonusLevel, level - 1);
+					// }
 				}
 
 				if (branch.isQueenPromotion()) {
@@ -419,7 +419,8 @@ public class AIProcessor extends Thread {
 						if (AISettings.bonusEnable) {
 
 							if (twigGrowthEnabled) {
-								branch.getChild(i).setChosenPathValue(-growDecisionTreeLite(-beta, -alpha, level - 1, branch.getChild(i).getMove(), bonusLevel));
+								branch.getChild(i).setChosenPathValue(
+										-growDecisionTreeLite(-beta, -alpha, level - 1, branch.getChild(i).getMove(), bonusLevel));
 								// branch.getChild(i).setBound(getNodeType(-branch.getChild(i).getChosenPathValue(),
 								// -beta, -alpha));
 							} else {
@@ -481,8 +482,8 @@ public class AIProcessor extends Thread {
 
 			if (AISettings.useHashTable && level >= 0 && !stopSearch) {
 				if (hashOut == null) {
-					hashTable[board.getHashIndex()] = new BoardHashEntry(board.getHashCode(), level, cpv, ai.getMoveNum(), getNodeType(cpv, a, beta), branch.getHeadChild()
-							.getMove());
+					hashTable[(int) (board.getHashCode() & AISettings.hashIndexMask)] = new BoardHashEntry(board.getHashCode(), level, cpv,
+							ai.getMoveNum(), getNodeType(cpv, a, beta), branch.getHeadChild().getMove());
 				} else {
 					if (hashTableUpdate(hashOut, level, ai.getMoveNum())) {
 						hashOut.setAll(board.getHashCode(), level, cpv, ai.getMoveNum(), getNodeType(cpv, a, beta), branch.getHeadChild().getMove());// ,board.toString());
@@ -533,7 +534,7 @@ public class AIProcessor extends Thread {
 		int b = beta;
 		long bestMove = 0;
 
-		int hashIndex = board.getHashIndex();
+		int hashIndex = (int) (board.getHashCode() & AISettings.hashIndexMask);
 		BoardHashEntry hashOut;
 		long hashMove = 0;
 		hashOut = hashTable[hashIndex];
@@ -598,7 +599,7 @@ public class AIProcessor extends Thread {
 			GameStatus tempBoardState;
 			long move;
 
-			ArrayList<Long> moves = new ArrayList<Long>(board.generateValidMoves(true, hashMove, AI.noKillerMoves));
+			ArrayList<Long> moves = new ArrayList<Long>(board.generateValidMoves(true, hashMove, Board.noKillerMoves));
 
 			if (!board.isGameOver()) {
 
@@ -649,7 +650,8 @@ public class AIProcessor extends Thread {
 
 		if (AISettings.useHashTable && level >= 0) {
 			if (hashOut == null) {
-				hashTable[hashIndex] = new BoardHashEntry(board.getHashCode(), level, bestPathValue, ai.getMoveNum(), getNodeType(bestPathValue, a, b), bestMove);
+				hashTable[hashIndex] = new BoardHashEntry(board.getHashCode(), level, bestPathValue, ai.getMoveNum(),
+						getNodeType(bestPathValue, a, b), bestMove);
 			} else {
 				if (hashTableUpdate(hashOut, level, ai.getMoveNum())) {
 					hashOut.setAll(board.getHashCode(), level, bestPathValue, ai.getMoveNum(), getNodeType(bestPathValue, a, b), bestMove);// ,board.toString());

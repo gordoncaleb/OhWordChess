@@ -14,6 +14,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 
 import com.gordoncaleb.client.chess.Board;
+import com.gordoncaleb.client.chess.GameStatus;
 import com.gordoncaleb.client.chess.Move;
 import com.gordoncaleb.client.chess.Move.MoveNote;
 import com.gordoncaleb.client.chess.Side;
@@ -22,7 +23,6 @@ import com.gordoncaleb.client.pieces.PieceUtils;
 import com.gordoncaleb.client.pieces.Piece.PieceID;
 
 import chessBackend.*;
-import chessBackend.Game.GameStatus;
 import chessIO.ChessImages;
 
 public class BoardPanel extends JPanel implements MouseListener, ActionListener {

@@ -5,6 +5,7 @@ import java.util.Vector;
 
 import com.gordoncaleb.client.chess.Board;
 import com.gordoncaleb.client.chess.BoardMaker;
+import com.gordoncaleb.client.chess.GameStatus;
 import com.gordoncaleb.client.chess.Side;
 
 import chessAI.DecisionNode;
@@ -12,10 +13,6 @@ import chessIO.FileIO;
 import chessIO.XMLParser;
 
 public class Game implements PlayerContainer {
-	
-	public static enum GameStatus {
-		IN_PLAY,CHECK,CHECKMATE,STALEMATE,TIMES_UP,DRAW,INVALID
-	}
 
 	private Hashtable<Side, Player> players;
 	private Vector<Player> observers;

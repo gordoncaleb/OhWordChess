@@ -1,9 +1,7 @@
-package chessBackend;
+package com.gordoncaleb.client.chess;
 
-import java.security.SecureRandom;
 import java.util.Random;
 
-import com.gordoncaleb.client.chess.Side;
 import com.gordoncaleb.client.pieces.Piece.PieceID;
 
 public class RNGTable {
@@ -17,11 +15,21 @@ public class RNGTable {
 	private static RNGTable singleton;
 
 	public RNGTable() {
-		rng = new SecureRandom(seed);
+		rng = new Random(getLongSeed(seed));
 		generatePiecePerSquare();
 		generateBlackToMove();
 		generateCastlingRights();
 		generateEnPassantFile();
+	}
+
+	public long getLongSeed(byte[] bytes) {
+		long seed = 0;
+
+		for (int i = 0; i < bytes.length; i++) {
+			seed |= (bytes[i] << (8 * i));
+		}
+
+		return seed;
 	}
 
 	public static void main(String[] args) {
@@ -40,7 +48,10 @@ public class RNGTable {
 	}
 
 	public long randomLong() {
-		return rng.nextLong();
+		long l = rng.nextLong();
+
+		//System.out.println(String.format("RandomLong=%x", l));
+		return l;
 	}
 
 	private void generatePiecePerSquare() {
@@ -60,14 +71,12 @@ public class RNGTable {
 		}
 	}
 
-	public long getPiecePerSquareRandom(Side player, PieceID id, int row,
-			int col) {
+	public long getPiecePerSquareRandom(Side player, PieceID id, int row, int col) {
 		return piecePerSquare[player.ordinal()][id.ordinal()][row][col];
 	}
 
 	private void generateBlackToMove() {
 		blackToMove = randomLong();
-
 	}
 
 	public long getBlackToMoveRandom() {
@@ -88,9 +97,8 @@ public class RNGTable {
 		}
 	}
 
-	public long getCastlingRightsRandom(boolean blackFarRook,
-			boolean blackNearRook, boolean blackKing, boolean whiteFarRook,
-			boolean whiteNearRook, boolean whiteKing) {
+	public long getCastlingRightsRandom(boolean blackFarRook, boolean blackNearRook, boolean blackKing, boolean whiteFarRook, boolean whiteNearRook,
+			boolean whiteKing) {
 
 		int blackLeft = 0;
 		int blackRight = 0;

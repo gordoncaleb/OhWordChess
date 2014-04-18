@@ -11,10 +11,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.gordoncaleb.client.chess.Board;
+import com.gordoncaleb.client.chess.GameStatus;
 import com.gordoncaleb.client.chess.Move;
 import com.gordoncaleb.client.chess.Side;
 
-import chessBackend.Game.GameStatus;
 import chessBackend.Player;
 import chessBackend.PlayerContainer;
 import chessIO.FileIO;

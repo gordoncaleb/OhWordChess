@@ -2,22 +2,19 @@ package com.gordoncaleb.client.shapes;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
-import com.gordoncaleb.client.Drawable;
-import com.gordoncaleb.client.util.CanvasUtils;
 
-public class Rectangle implements Drawable {
+public class Rectangle extends UIObject2D {
 
-	private CssColor fillColor = CanvasUtils.getRandomCssColor();
-	private CssColor strokeColor = CanvasUtils.getRandomCssColor();
-	private int x, y, width, height;
+	private CssColor fillColor;
+	private CssColor strokeColor;
+	private int width, height;
 
-	public Rectangle(CssColor fillColor, CssColor strokeColor, int x, int y,
-			int width, int height) {
+	public Rectangle(CssColor fillColor, CssColor strokeColor, int x, int y, int width, int height) {
+
 		super();
 		this.fillColor = fillColor;
 		this.strokeColor = strokeColor;
-		this.x = x;
-		this.y = y;
+		this.position = new Vector2D(x, y);
 		this.width = width;
 		this.height = height;
 	}
@@ -36,22 +33,6 @@ public class Rectangle implements Drawable {
 
 	public void setFillColor(CssColor fillColor) {
 		this.fillColor = fillColor;
-	}
-
-	public int getX() {
-		return x;
-	}
-
-	public void setX(int x) {
-		this.x = x;
-	}
-
-	public int getY() {
-		return y;
-	}
-
-	public void setY(int y) {
-		this.y = y;
 	}
 
 	public int getWidth() {
@@ -73,9 +54,9 @@ public class Rectangle implements Drawable {
 	public void draw(Context2d context) {
 		context.save();
 		context.setFillStyle(fillColor);
-		context.fillRect(x, y, width, height);
+		context.fillRect(position.getX(), position.getY(), width, height);
 		context.setStrokeStyle(strokeColor);
-		context.strokeRect(x, y, width, height);
+		context.strokeRect(position.getX(), position.getY(), width, height);
 		context.restore();
 	}
 }

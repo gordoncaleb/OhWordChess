@@ -285,5 +285,15 @@ public class XMLParser {
 		}
 		return "";
 	}
+	
+	public static Long getHashCode(String xmlBoard) {
+		Board board = XMLParser.XMLToBoard(xmlBoard);
+
+		if (board != null) {
+			return board.getHashCode();
+		} else {
+			return null;
+		}
+	}
 
 }

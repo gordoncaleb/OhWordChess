@@ -1,4 +1,4 @@
-package com.gordoncaleb.client;
+package com.gordoncaleb.client.shapes;
 
 import java.util.ArrayList;
 import java.util.List;

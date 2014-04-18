@@ -1,4 +1,4 @@
-package com.gordoncaleb.client;
+package com.gordoncaleb.client.shapes;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
@@ -7,11 +7,11 @@ import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.gordoncaleb.client.chess.Board;
-import com.gordoncaleb.client.shapes.Rectangle;
+import com.gordoncaleb.client.chess.BoardMaker;
+import com.gordoncaleb.client.pieces.Piece;
 import com.gordoncaleb.client.util.CanvasUtils;
 
-public class ChessBoardLayer implements Drawable, MouseMoveHandler,
-		MouseDownHandler {
+public class ChessBoardLayer implements Drawable, MouseMoveHandler, MouseDownHandler {
 
 	private Layer boardLayer;
 	private Layer pieceLayer;
@@ -19,13 +19,16 @@ public class ChessBoardLayer implements Drawable, MouseMoveHandler,
 	private Rectangle[][] squares = new Rectangle[8][8];
 	private CssColor lightColor, darkColor;
 
+	private Rectangle selectedSquare;
+
 	private int width, height;
 	private int mouseX, mouseY, clickX, clickY;
-	
+
 	private Board board;
 
-	public ChessBoardLayer(int width, int height, CssColor lightColor,
-			CssColor darkColor) {
+	public ChessBoardLayer(int width, int height, CssColor lightColor, CssColor darkColor) {
+
+		board = BoardMaker.getStandardChessBoard();
 
 		boardLayer = new Layer();
 		pieceLayer = new Layer();
@@ -38,20 +41,26 @@ public class ChessBoardLayer implements Drawable, MouseMoveHandler,
 		int w = width / 8;
 		int h = height / 8;
 
+		Piece pModel;
 		Rectangle s;
+		Sprite pView;
 		for (int r = 0; r < 8; r++) {
 			for (int c = 0; c < 8; c++) {
 
-				s = new Rectangle(
-						((r % 2) == (c % 2)) ? lightColor : darkColor,
-						CanvasUtils.BLACK, c * w, r * h, w, h);
+				s = new Rectangle(((r % 2) == (c % 2)) ? lightColor : darkColor, CanvasUtils.BLACK, c * w, r * h, w, h);
 
 				squares[r][c] = s;
 
 				boardLayer.addDrawable(s);
+
+				pModel = board.getPiece(r, c);
+				String imgName = ImageLoader.getImageName(pModel.getPieceID(), pModel.getSide());
+				pView = new Sprite(imgName);
+				pView.setPosition(s.getPosition().getX(), s.getPosition().getY());
+
+				pieceLayer.addDrawable(pView);
 			}
 		}
-		
 
 	}
 
@@ -64,7 +73,8 @@ public class ChessBoardLayer implements Drawable, MouseMoveHandler,
 		setAllStrokeColors(CanvasUtils.BLACK);
 		setAllFillColors(lightColor, darkColor);
 
-		getSquareAt(x, y).setFillColor(CanvasUtils.YELLOW);
+		selectedSquare = getSquareAt(x, y);
+		selectedSquare.setFillColor(CanvasUtils.YELLOW);
 	}
 
 	private Rectangle getSquareAt(int x, int y) {
@@ -88,8 +98,7 @@ public class ChessBoardLayer implements Drawable, MouseMoveHandler,
 	private void setAllFillColors(CssColor lightColor, CssColor darkColor) {
 		for (int r = 0; r < squares.length; r++) {
 			for (int c = 0; c < squares[r].length; c++) {
-				squares[r][c].setFillColor(((r % 2) == (c % 2)) ? lightColor
-						: darkColor);
+				squares[r][c].setFillColor(((r % 2) == (c % 2)) ? lightColor : darkColor);
 			}
 		}
 	}

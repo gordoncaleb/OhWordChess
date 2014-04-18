@@ -31,8 +31,6 @@ public class Move {
 	public static void main(String[] args) {
 
 		long moveLong;
-		Piece pieceTaken1;
-		Piece pieceTaken2;
 
 		for (int i = 0; i < 2000000; i++) {
 			moveLong = Move.moveLong(1, 2, 3, 4, i, MoveNote.NONE, null, true);

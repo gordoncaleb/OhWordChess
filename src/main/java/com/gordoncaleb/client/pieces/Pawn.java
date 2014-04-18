@@ -7,7 +7,6 @@ import com.gordoncaleb.client.chess.Board;
 import com.gordoncaleb.client.chess.Move;
 import com.gordoncaleb.client.chess.Move.MoveNote;
 import com.gordoncaleb.client.chess.Side;
-import com.gordoncaleb.client.pieces.Piece.PieceID;
 
 public class Pawn extends Piece {
 

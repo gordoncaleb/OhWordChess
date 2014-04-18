@@ -5,9 +5,9 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import com.gordoncaleb.client.chess.Board;
+import com.gordoncaleb.client.chess.GameStatus;
 import com.gordoncaleb.client.chess.Move;
 
-import chessBackend.Game.GameStatus;
 import chessBackend.Player;
 import chessBackend.PlayerContainer;
 import chessIO.FileIO;

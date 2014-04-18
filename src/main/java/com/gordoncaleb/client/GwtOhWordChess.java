@@ -23,6 +23,8 @@ import com.google.gwt.event.dom.client.TouchMoveHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.gordoncaleb.client.shapes.ChessBoardLayer;
+import com.gordoncaleb.client.shapes.Drawable;
 import com.gordoncaleb.client.util.CanvasUtils;
 
 public class GwtOhWordChess implements EntryPoint {

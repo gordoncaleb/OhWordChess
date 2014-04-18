@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 
 import com.gordoncaleb.client.chess.Board;
 import com.gordoncaleb.client.chess.BoardMaker;
+import com.gordoncaleb.client.chess.GameStatus;
 import com.gordoncaleb.client.chess.Move;
 import com.gordoncaleb.client.chess.Side;
 import com.gordoncaleb.client.pieces.PositionBonus;
@@ -29,7 +30,6 @@ import com.gordoncaleb.client.pieces.PositionBonus;
 import chessAI.AI;
 import chessAI.AISettings;
 import chessBackend.Game;
-import chessBackend.Game.GameStatus;
 import chessBackend.GameResults;
 import chessBackend.Player;
 import chessBackend.PlayerContainer;

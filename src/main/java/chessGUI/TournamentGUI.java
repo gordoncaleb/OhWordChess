@@ -10,11 +10,11 @@ import javax.swing.JTextArea;
 
 import com.gordoncaleb.client.chess.Board;
 import com.gordoncaleb.client.chess.BoardMaker;
+import com.gordoncaleb.client.chess.GameStatus;
 import com.gordoncaleb.client.chess.Side;
 
 import chessAI.AI;
 import chessBackend.Game;
-import chessBackend.Game.GameStatus;
 import chessBackend.GameResults;
 import chessBackend.Player;
 import chessEthernet.EthernetPlayerClient;

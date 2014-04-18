@@ -7,15 +7,11 @@ import java.util.Vector;
 
 import com.gordoncaleb.client.chess.Move.MoveNote;
 import com.gordoncaleb.client.pieces.*;
-import com.gordoncaleb.client.pieces.Piece.PieceID;
-
-import chessAI.AI;
-import chessAI.AISettings;
-import chessBackend.Game.GameStatus;
-import chessBackend.RNGTable;
-import chessIO.XMLParser;
+import com.gordoncaleb.client.pieces.Piece.PieceID;;
 
 public class Board {
+	public static long[] noKillerMoves = {};
+
 	private Piece[][] board;
 	private GameStatus boardStatus;
 	private ArrayList<Long> validMoves = new ArrayList<Long>(100);
@@ -48,7 +44,7 @@ public class Board {
 	public static void main(String[] args) {
 		Board board = BoardMaker.getStandardChessBoard();
 
-		ArrayList<Long> moves = board.generateValidMoves(true, 0, AI.noKillerMoves);
+		ArrayList<Long> moves = board.generateValidMoves(true, 0, noKillerMoves);
 
 		long m = moves.get(0);
 
@@ -58,7 +54,7 @@ public class Board {
 		for (int i = 0; i < its; i++) {
 			board.makeMove(m);
 			board.makeNullMove();
-			moves = board.generateValidMoves(true, 0, AI.noKillerMoves);
+			moves = board.generateValidMoves(true, 0, noKillerMoves);
 			board.undoMove();
 		}
 
@@ -499,7 +495,7 @@ public class Board {
 	}
 
 	public ArrayList<Long> generateValidMoves() {
-		return generateValidMoves(false, 0, AI.noKillerMoves);
+		return generateValidMoves(false, 0, noKillerMoves);
 	}
 
 	public ArrayList<Long> generateValidMoves(boolean sort, long hashMove, long[] killerMoves) {
@@ -1207,22 +1203,8 @@ public class Board {
 		return hashCode;
 	}
 
-	public int getHashIndex() {
-		return (int) (hashCode & AISettings.hashIndexMask);
-	}
-
 	public long getHashCode() {
 		return hashCode;
-	}
-
-	public static Long getHashCode(String xmlBoard) {
-		Board board = XMLParser.XMLToBoard(xmlBoard);
-
-		if (board != null) {
-			return board.getHashCode();
-		} else {
-			return null;
-		}
 	}
 
 	public boolean isRevisitedState() {
