@@ -1,12 +1,18 @@
 package com.gordoncaleb.client.shapes;
 
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.gordoncaleb.client.shapes.animation.Animation;
+import com.gordoncaleb.client.shapes.animation.Propagatable;
 
-public abstract class UIObject2D implements Drawable {
+public abstract class UIObject2D implements Drawable, Propagatable {
 
+	protected Animation animation;
+	
+	protected double width, height, rotation, scale;
 	protected Vector2D position = new Vector2D(0, 0);
-	protected Vector2D vel;
-	protected Vector2D accel;
+	
+	protected Vector2D vel = new Vector2D(0, 0);
+	protected Vector2D accel = new Vector2D(0, 0);
 
 	public Vector2D getPosition() {
 		return position;
@@ -45,6 +51,37 @@ public abstract class UIObject2D implements Drawable {
 	public void setAccel(double x, double y) {
 		this.accel.setX(x);
 		this.accel.setY(y);
+	}
+
+	public double getWidth() {
+		return width;
+	}
+
+	public void setWidth(double width) {
+		this.width = width;
+	}
+
+	public double getHeight() {
+		return height;
+	}
+
+	public void setHeight(double height) {
+		this.height = height;
+	}
+
+	public Animation getAnimation() {
+		return animation;
+	}
+
+	public void setAnimation(Animation animation) {
+		this.animation = animation;
+	}
+
+	public void propagate(double elapsedTime) {
+		if (animation != null) {
+			animation.propagate(elapsedTime);
+			animation.animate(this);
+		}
 	}
 
 	public abstract void draw(Context2d context);

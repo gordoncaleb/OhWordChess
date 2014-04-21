@@ -1,5 +1,8 @@
 package com.gordoncaleb.client.shapes;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -8,30 +11,41 @@ import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.gordoncaleb.client.chess.Board;
 import com.gordoncaleb.client.chess.BoardMaker;
+import com.gordoncaleb.client.chess.Move;
 import com.gordoncaleb.client.pieces.Piece;
 import com.gordoncaleb.client.util.CanvasUtils;
+import com.gordoncaleb.client.util.ImageLoader;
 
-public class ChessBoardLayer implements Drawable, MouseMoveHandler, MouseDownHandler {
+public class ChessBoardLayer extends Group implements MouseMoveHandler, MouseDownHandler {
 
-	private Layer boardLayer;
-	private Layer pieceLayer;
+	private Group boardLayer;
+	private Group pieceLayer;
 
 	private Rectangle[][] squares = new Rectangle[8][8];
+	private Sprite[][] pieces = new Sprite[8][8];
 	private CssColor lightColor, darkColor;
 
-	private Rectangle selectedSquare;
+	private int waiting = 0;
+
+	private int[] selected;
 
 	private int width, height;
 	private int mouseX, mouseY, clickX, clickY;
 
 	private Board board;
+	private List<Long> validMoves;
 
 	public ChessBoardLayer(int width, int height, CssColor lightColor, CssColor darkColor) {
 
 		board = BoardMaker.getStandardChessBoard();
+		board.makeNullMove();
+		validMoves = board.generateValidMoves();
 
-		boardLayer = new Layer();
-		pieceLayer = new Layer();
+		boardLayer = new Group();
+		pieceLayer = new Group();
+
+		this.add(boardLayer);
+		this.add(pieceLayer);
 
 		this.width = width;
 		this.height = height;
@@ -43,7 +57,6 @@ public class ChessBoardLayer implements Drawable, MouseMoveHandler, MouseDownHan
 
 		Piece pModel;
 		Rectangle s;
-		Sprite pView;
 		for (int r = 0; r < 8; r++) {
 			for (int c = 0; c < 8; c++) {
 
@@ -51,40 +64,114 @@ public class ChessBoardLayer implements Drawable, MouseMoveHandler, MouseDownHan
 
 				squares[r][c] = s;
 
-				boardLayer.addDrawable(s);
+				boardLayer.add(s);
 
 				pModel = board.getPiece(r, c);
-				String imgName = ImageLoader.getImageName(pModel.getPieceID(), pModel.getSide());
-				pView = new Sprite(imgName);
-				pView.setPosition(s.getPosition().getX(), s.getPosition().getY());
 
-				pieceLayer.addDrawable(pView);
+				if (pModel != null) {
+					String imgName = ImageLoader.getImageName(pModel.getPieceID(), pModel.getSide());
+					pieces[r][c] = new Sprite(imgName, s.getPosition().getX() + 1, s.getPosition().getY() + 1, w - 5, h - 5);
+					pieceLayer.add(pieces[r][c]);
+				} else {
+					pieces[r][c] = null;
+				}
 			}
 		}
 
 	}
 
+	private List<Long> getValidMovesFrom(int r, int c) {
+		List<Long> moves = new ArrayList<Long>();
+
+		for (Long move : validMoves) {
+			if (c == Move.getFromCol(move) && r == Move.getFromRow(move)) {
+				moves.add(move);
+			}
+		}
+
+		return moves;
+	}
+
+	private Long isValidMove(int fromRow, int fromCol, int toRow, int toCol) {
+		for (Long move : validMoves) {
+			if (fromCol == Move.getFromCol(move) && fromRow == Move.getFromRow(move) && toRow == Move.getToRow(move) && toCol == Move.getToCol(move)) {
+				return move;
+			}
+		}
+
+		return null;
+	}
+
+	private int getRowPosition(int row) {
+		return row * (height / 8);
+	}
+
+	private int getColPosition(int col) {
+		return col * (width / 8);
+	}
+
 	private void hoverSquare(int x, int y) {
 		setAllStrokeColors(CanvasUtils.BLACK);
-		getSquareAt(x, y).setStrokeColor(CanvasUtils.YELLOW);
+		if (x < width && y < height) {
+			squares[getRowAt(y)][getColAt(x)].setStrokeColor(CanvasUtils.DARKBLUE);
+		}
 	}
 
 	private void selectSquare(int x, int y) {
 		setAllStrokeColors(CanvasUtils.BLACK);
 		setAllFillColors(lightColor, darkColor);
 
-		selectedSquare = getSquareAt(x, y);
-		selectedSquare.setFillColor(CanvasUtils.YELLOW);
+		if (x < width && y < height) {
+
+			int col = getColAt(x);
+			int row = getRowAt(y);
+
+			List<Long> moves = getValidMovesFrom(row, col);
+			if (!moves.isEmpty()) {
+				selected = new int[] { row, col };
+
+				squares[row][col].setFillColor(CanvasUtils.GRAY);
+				for (Long move : moves) {
+					squares[Move.getToRow(move)][Move.getToCol(move)].setFillColor(CanvasUtils.YELLOW);
+				}
+			} else {
+				if (selected != null) {
+					Long move = isValidMove(selected[0], selected[1], row, col);
+					if (move != null) {
+						board.makeMove(move);
+						board.makeNullMove();
+						board.generateValidMoves();
+
+						animateMove(move);
+					}
+				}
+				selected = null;
+			}
+		}
 	}
 
-	private Rectangle getSquareAt(int x, int y) {
-		int w = width / 8;
+	public void animateMove(Long move) {
+		int row = Move.getToRow(move);
+		int col = Move.getToCol(move);
+
+		if (pieces[row][col] != null) {
+			pieceLayer.remove(pieces[row][col]);
+		}
+
+		pieces[row][col] = pieces[selected[0]][selected[1]];
+		pieces[selected[0]][selected[1]] = null;
+
+		pieces[row][col].setPosition(getColPosition(col) + 1, getRowPosition(row) + 1);
+	}
+
+	private int getRowAt(int y) {
 		int h = height / 8;
+		return y / h;
+	}
 
-		int col = x / w;
-		int row = y / h;
-
-		return squares[row][col];
+	private int getColAt(int x) {
+		int w = width / 8;
+		return x / w;
 	}
 
 	private void setAllStrokeColors(CssColor color) {
@@ -104,12 +191,6 @@ public class ChessBoardLayer implements Drawable, MouseMoveHandler, MouseDownHan
 	}
 
 	@Override
-	public void draw(Context2d context) {
-		boardLayer.draw(context);
-		pieceLayer.draw(context);
-	}
-
-	@Override
 	public void onMouseMove(MouseMoveEvent e) {
 		mouseX = e.getRelativeX(e.getRelativeElement());
 		mouseY = e.getRelativeY(e.getRelativeElement());
@@ -118,9 +199,11 @@ public class ChessBoardLayer implements Drawable, MouseMoveHandler, MouseDownHan
 
 	@Override
 	public void onMouseDown(MouseDownEvent e) {
-		clickX = e.getRelativeX(e.getRelativeElement());
-		clickY = e.getRelativeY(e.getRelativeElement());
-		selectSquare(clickX, clickY);
+		if (waiting == 0) {
+			clickX = e.getRelativeX(e.getRelativeElement());
+			clickY = e.getRelativeY(e.getRelativeElement());
+			selectSquare(clickX, clickY);
+		}
 	}
 
 }

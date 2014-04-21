@@ -1,4 +1,4 @@
-package com.gordoncaleb.client.shapes;
+package com.gordoncaleb.client.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -6,12 +6,11 @@ import java.util.List;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
+import com.google.gwt.core.client.Duration;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Touch;
 import com.google.gwt.event.dom.client.GestureStartEvent;
 import com.google.gwt.event.dom.client.GestureStartHandler;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
@@ -25,6 +24,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.gordoncaleb.client.shapes.ChessBoardLayer;
 import com.gordoncaleb.client.shapes.Drawable;
+import com.gordoncaleb.client.shapes.Group;
 import com.gordoncaleb.client.util.CanvasUtils;
 
 public class GwtOhWordChess implements EntryPoint {
@@ -47,7 +47,9 @@ public class GwtOhWordChess implements EntryPoint {
 	Context2d context;
 	Context2d backBufferContext;
 
-	List<Drawable> layers = new ArrayList<Drawable>();
+	Double lastUpdate;
+
+	Group layers;
 
 	ChessBoardLayer board;
 
@@ -56,10 +58,7 @@ public class GwtOhWordChess implements EntryPoint {
 		canvas = Canvas.createIfSupported();
 		backBuffer = Canvas.createIfSupported();
 		if (canvas == null) {
-			RootPanel
-					.get(holderId)
-					.add(new Label(
-							"HTML5 Canvas not supported! Upgrade your browser yo!"));
+			RootPanel.get(holderId).add(new Label("HTML5 Canvas not supported! Upgrade your browser yo!"));
 			return;
 		}
 
@@ -76,8 +75,7 @@ public class GwtOhWordChess implements EntryPoint {
 
 		// init the objects
 
-		board = new ChessBoardLayer(width, height, CanvasUtils.LIGHTBROWN,
-				CanvasUtils.DARKBROWN);
+		board = new ChessBoardLayer(width, height, CanvasUtils.LIGHTBROWN, CanvasUtils.DARKBROWN);
 
 		layers.add(board);
 
@@ -100,9 +98,11 @@ public class GwtOhWordChess implements EntryPoint {
 		backBufferContext.setFillStyle(redrawColor);
 		backBufferContext.fillRect(0, 0, width, height);
 
-		for (Drawable d : layers) {
-			d.draw(backBufferContext);
-		}
+		double now = Duration.currentTimeMillis();
+		double elapsedTime = (lastUpdate == null) ? 0.0 : (now - lastUpdate);
+		lastUpdate = now;
+		layers.propagate(elapsedTime);
+		layers.draw(backBufferContext);
 
 		context.drawImage(backBufferContext.getCanvas(), 0, 0);
 	}
