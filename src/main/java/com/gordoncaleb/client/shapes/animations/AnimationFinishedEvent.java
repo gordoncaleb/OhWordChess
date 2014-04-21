@@ -1,4 +1,4 @@
-package com.gordoncaleb.client.shapes.animation;
+package com.gordoncaleb.client.shapes.animations;
 
 public class AnimationFinishedEvent implements Event {
 

@@ -1,4 +1,4 @@
-package com.gordoncaleb.client.shapes.animation;
+package com.gordoncaleb.client.shapes.animation.Transitions;
 
 import java.util.ArrayList;
 import java.util.List;

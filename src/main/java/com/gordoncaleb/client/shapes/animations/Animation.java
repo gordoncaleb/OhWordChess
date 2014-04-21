@@ -1,4 +1,4 @@
-package com.gordoncaleb.client.shapes.animation;
+package com.gordoncaleb.client.shapes.animations;
 
 import com.gordoncaleb.client.shapes.UIObject2D;
 
