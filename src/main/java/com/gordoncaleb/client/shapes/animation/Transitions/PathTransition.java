@@ -1,6 +1,4 @@
-package com.gordoncaleb.client.shapes.animation.Transitions;
-
-import com.gordoncaleb.client.shapes.UIObject2D;
+package com.gordoncaleb.client.shapes.animation.transitions;
 
 public class PathTransition extends Transition {
 
@@ -12,8 +10,8 @@ public class PathTransition extends Transition {
 	}
 
 	@Override
-	public void animate(UIObject2D node) {
-		node.setPosition(path.interpolatePoint(this.getProgress()));
+	public void animate() {
+		node.setPosition(path.interpolatePoint(interpolator.curve(getProgress())));
 	}
 
 }

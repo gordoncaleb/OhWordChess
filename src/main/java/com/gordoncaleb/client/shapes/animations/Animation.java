@@ -20,10 +20,12 @@ public abstract class Animation {
 	protected double playHead = INITIAL_PLAY_HEAD;
 	protected double cycles = INFINITE_CYCLES;
 
+	protected UIObject2D node;
+
 	protected double cycleCount = 0;
 	protected double duration;
 
-	protected EventHandler<AnimationFinishedEvent> onFinshed;
+	protected EventHandler<AnimationFinishedEvent> onFinished;
 
 	public Animation() {
 	}
@@ -70,6 +72,9 @@ public abstract class Animation {
 						cycleCount++;
 					} else {
 						stop();
+						if (onFinished != null) {
+							onFinished.handle(new AnimationFinishedEvent(this));
+						}
 					}
 				}
 
@@ -87,6 +92,18 @@ public abstract class Animation {
 
 	public Status getStatus() {
 		return status;
+	}
+
+	public boolean isRunning() {
+		return (status == Status.RUNNING);
+	}
+
+	public boolean isPaused() {
+		return (status == Status.PAUSED);
+	}
+
+	public boolean isStopped() {
+		return (status == Status.STOPPED);
 	}
 
 	public double getRate() {
@@ -122,13 +139,21 @@ public abstract class Animation {
 	}
 
 	public EventHandler<AnimationFinishedEvent> getOnFinshed() {
-		return onFinshed;
+		return onFinished;
 	}
 
 	public void setOnFinshed(EventHandler<AnimationFinishedEvent> onFinshed) {
-		this.onFinshed = onFinshed;
+		this.onFinished = onFinshed;
 	}
 
-	public abstract void animate(UIObject2D node);
+	public UIObject2D getNode() {
+		return node;
+	}
+
+	public void setNode(UIObject2D node) {
+		this.node = node;
+	}
+
+	public abstract void animate();
 
 }

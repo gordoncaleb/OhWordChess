@@ -1,23 +1,37 @@
-package com.gordoncaleb.client.shapes.animation.Transitions;
+package com.gordoncaleb.client.shapes.animation.transitions;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
-import com.gordoncaleb.client.shapes.UIObject2D;
+import com.gordoncaleb.client.shapes.animations.AnimationFinishedEvent;
+import com.gordoncaleb.client.shapes.animations.EventHandler;
 
 public class SequentialTransition extends Transition {
 
+	private LinkedList<Transition> transitions = new LinkedList<Transition>();
+
 	public SequentialTransition() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	private List<Transition> transitions = new ArrayList<Transition>();
+	public void play() {
+		if (!transitions.isEmpty()) {
+			if (!transitions.peek().isRunning()) {
+				transitions.peek().setOnFinshed(new EventHandler<AnimationFinishedEvent>() {
+					@Override
+					public void handle(AnimationFinishedEvent event) {
+						transitions.pop();
+					}
+				});
+				transitions.peek().play();
+			}
+		}
+	}
 
 	@Override
-	public void animate(UIObject2D node) {
-		// TODO Auto-generated method stub
+	public void animate() {
+		for (Transition t : transitions) {
+			t.animate();
+		}
 
 	}
-
 }

@@ -1,4 +1,4 @@
-package com.gordoncaleb.client.shapes.animation.Transitions;
+package com.gordoncaleb.client.shapes.animation.transitions;
 
 import com.gordoncaleb.client.shapes.Vector2D;
 
