@@ -8,7 +8,7 @@ public abstract class UIObject2D implements Drawable, Propagatable {
 
 	protected Animation animation;
 
-	protected double width, height, rotation, scale;
+	protected double width, height, rotation, scale, opacity;
 	protected Vector2D position = new Vector2D(0, 0);
 
 	protected Vector2D vel = new Vector2D(0, 0);
@@ -70,6 +70,30 @@ public abstract class UIObject2D implements Drawable, Propagatable {
 
 	public void setHeight(double height) {
 		this.height = height;
+	}
+
+	public double getRotation() {
+		return rotation;
+	}
+
+	public void setRotation(double rotation) {
+		this.rotation = rotation;
+	}
+
+	public double getScale() {
+		return scale;
+	}
+
+	public void setScale(double scale) {
+		this.scale = scale;
+	}
+
+	public double getOpacity() {
+		return opacity;
+	}
+
+	public void setOpacity(double opacity) {
+		this.opacity = opacity;
 	}
 
 	public Animation getAnimation() {
