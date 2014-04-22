@@ -105,7 +105,7 @@ public abstract class UIObject2D implements Drawable, Propagatable {
 		this.animation.setNode(this);
 	}
 
-	public void propagate(double elapsedTime) {
+	public void propagateAndAnimate(double elapsedTime) {
 		if (animation != null) {
 			animation.propagate(elapsedTime);
 			animation.animate();

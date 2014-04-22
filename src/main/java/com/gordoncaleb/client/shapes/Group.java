@@ -22,11 +22,13 @@ public class Group extends UIObject2D {
 	}
 
 	@Override
-	public void propagate(double elapsedTime) {
-		super.propagate(elapsedTime);
+	public void propagateAndAnimate(double elapsedTime) {
+
 		for (UIObject2D d : uiObjects) {
-			d.propagate(elapsedTime);
+			d.propagateAndAnimate(elapsedTime);
 		}
+
+		super.propagateAndAnimate(elapsedTime);
 	}
 
 	@Override

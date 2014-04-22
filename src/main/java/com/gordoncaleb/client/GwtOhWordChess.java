@@ -49,7 +49,7 @@ public class GwtOhWordChess implements EntryPoint {
 
 	Double lastUpdate;
 
-	Group layers;
+	Group layers = new Group();
 
 	ChessBoardLayer board;
 
@@ -101,7 +101,7 @@ public class GwtOhWordChess implements EntryPoint {
 		double now = Duration.currentTimeMillis();
 		double elapsedTime = (lastUpdate == null) ? 0.0 : (now - lastUpdate);
 		lastUpdate = now;
-		layers.propagate(elapsedTime);
+		layers.propagateAndAnimate(elapsedTime);
 		layers.draw(backBufferContext);
 
 		context.drawImage(backBufferContext.getCanvas(), 0, 0);

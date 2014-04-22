@@ -6,7 +6,7 @@ public class FadeTransition extends Transition {
 	private double end;
 
 	@Override
-	public void animate() {
+	public void animateImpl() {
 		node.setOpacity(interpolator.interpolate(start, end, getProgress()));
 	}
 

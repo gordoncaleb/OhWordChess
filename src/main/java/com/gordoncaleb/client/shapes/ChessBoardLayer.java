@@ -2,8 +2,9 @@ package com.gordoncaleb.client.shapes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
@@ -13,6 +14,11 @@ import com.gordoncaleb.client.chess.Board;
 import com.gordoncaleb.client.chess.BoardMaker;
 import com.gordoncaleb.client.chess.Move;
 import com.gordoncaleb.client.pieces.Piece;
+import com.gordoncaleb.client.shapes.animation.transitions.LineTo;
+import com.gordoncaleb.client.shapes.animation.transitions.MoveTo;
+import com.gordoncaleb.client.shapes.animation.transitions.Path;
+import com.gordoncaleb.client.shapes.animation.transitions.PathTransition;
+import com.gordoncaleb.client.shapes.animations.Animation;
 import com.gordoncaleb.client.util.CanvasUtils;
 import com.gordoncaleb.client.util.ImageLoader;
 
@@ -151,17 +157,33 @@ public class ChessBoardLayer extends Group implements MouseMoveHandler, MouseDow
 	}
 
 	public void animateMove(Long move) {
-		int row = Move.getToRow(move);
-		int col = Move.getToCol(move);
+		int toRow = Move.getToRow(move);
+		int toCol = Move.getToCol(move);
 
-		if (pieces[row][col] != null) {
-			pieceLayer.remove(pieces[row][col]);
+		if (pieces[toRow][toCol] != null) {
+			pieceLayer.remove(pieces[toRow][toCol]);
 		}
 
-		pieces[row][col] = pieces[selected[0]][selected[1]];
+		pieces[toRow][toCol] = pieces[selected[0]][selected[1]];
 		pieces[selected[0]][selected[1]] = null;
 
-		pieces[row][col].setPosition(getColPosition(col) + 1, getRowPosition(row) + 1);
+		double tx = getColPosition(toCol) + 1;
+		double ty = getRowPosition(toRow) + 1;
+		double fx = getColPosition(toCol) + 1;
+		double fy = getRowPosition(toRow) + 1;
+
+		Animation a = PathTransition.linear(fx, fy, tx, ty);
+		a.setDuration(5000);
+		//a.setAutoReverse(true);
+		a.play();
+
+		
+		//Logger.getLogger("").log(Level.INFO, "Animating from " + imagePath);
+		
+		pieces[toRow][toCol].setAnimation(a);
+
+		// pieces[row][col].setPosition(getColPosition(col) + 1,
+		// getRowPosition(row) + 1);
 	}
 
 	private int getRowAt(int y) {

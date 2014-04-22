@@ -2,6 +2,8 @@ package com.gordoncaleb.client.shapes.animation.transitions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.gordoncaleb.client.shapes.Vector2D;
 
@@ -80,6 +82,10 @@ public class Path {
 
 	public Vector2D interpolatePoint(double fraction) {
 		double pointLength = getLength() * fraction;
+		
+		Logger.getLogger("").log(Level.INFO, "Path Length= " + getLength());
+		Logger.getLogger("").log(Level.INFO, "Point Length= " + pointLength);
+		
 		PathElement segment = null;
 
 		for (PathElement s : segments) {
@@ -92,6 +98,7 @@ public class Path {
 		}
 
 		if (segment != null) {
+			Logger.getLogger("").log(Level.INFO, "Segment Length= " + segment.getLength());
 			return segment.interpolatePoint(pointLength / segment.getLength());
 		} else {
 			return getLastSegment().getEndPoint();

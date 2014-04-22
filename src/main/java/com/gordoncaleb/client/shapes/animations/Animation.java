@@ -1,5 +1,8 @@
 package com.gordoncaleb.client.shapes.animations;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.gordoncaleb.client.shapes.UIObject2D;
 
 public abstract class Animation {
@@ -11,57 +14,65 @@ public abstract class Animation {
 	private static final double DEFAULT_RATE = 1.0;
 	private static final Status DEFAULT_STATUS = Status.STOPPED;
 	private static final boolean DEFAULT_AUTO_REVERSE = false;
-	private static final double INITIAL_PLAY_HEAD = Double.NaN;
+	private static final Double INITIAL_PLAY_HEAD = null;
 	private static final double INFINITE_CYCLES = Double.POSITIVE_INFINITY;
 
 	protected Status status = DEFAULT_STATUS;
 	protected double rate = DEFAULT_RATE;
 	protected boolean autoReverse = DEFAULT_AUTO_REVERSE;
-	protected double playHead = INITIAL_PLAY_HEAD;
-	protected double cycles = INFINITE_CYCLES;
+	protected Double playHead = INITIAL_PLAY_HEAD;
+	protected double cycles = 1;
 
 	protected UIObject2D node;
 
 	protected double cycleCount = 0;
-	protected double duration;
+	protected double duration = 1000;
 
 	protected EventHandler<AnimationFinishedEvent> onFinished;
 
 	public Animation() {
 	}
 
-	public void play() {
+	public Animation play() {
 		status = Status.RUNNING;
-	}
-
-	public void replay() {
-		stop();
-		play();
-	}
-
-	public void playFrom(double playHead) {
-		this.playHead = playHead;
-		play();
-	}
-
-	public void stop() {
-		status = Status.STOPPED;
 		playHead = INITIAL_PLAY_HEAD;
 		cycleCount = 0;
+		return this;
 	}
 
-	public void pause() {
+	public Animation replay() {
+		stop();
+		play();
+		return this;
+	}
+
+	public Animation playFrom(double playHead) {
+		this.playHead = playHead;
+		play();
+		return this;
+	}
+
+	public Animation stop() {
+		status = Status.STOPPED;
+		Logger.getLogger("").log(Level.INFO, "Animation stopped");
+		return this;
+	}
+
+	public Animation pause() {
 		status = Status.PAUSED;
+		return this;
 	}
 
 	public void propagate(double elapsedTime) {
 		if (status == Status.RUNNING) {
 			if (playHead != INITIAL_PLAY_HEAD) {
-				playHead = playHead + rate * elapsedTime;
+				playHead = Math.max(0.0, Math.min(duration, playHead + rate * elapsedTime));
+
+				Logger.getLogger("").log(Level.INFO, "Elapsed Time" + elapsedTime);
 
 				if (playHead >= duration || playHead <= 0.0) {
 
-					if (cycles == INFINITE_CYCLES || cycleCount < cycles) {
+					if (cycles == INFINITE_CYCLES || cycleCount < (cycles - 1)) {
 
 						if (autoReverse) {
 							rate = -rate;
@@ -75,19 +86,26 @@ public abstract class Animation {
 						if (onFinished != null) {
 							onFinished.handle(new AnimationFinishedEvent(this));
 						}
+
 					}
 				}
 
-				playHead = Math.max(0.0, Math.min(duration, playHead));
+				Logger.getLogger("").log(Level.INFO, "PlayHead set to " + playHead);
 			} else {
 				playHead = 0.0;
+				Logger.getLogger("").log(Level.INFO, "PlayHead set to 0");
 			}
+
 		}
 
 	}
 
-	public double getProgress() {
-		return playHead / duration;
+	public Double getProgress() {
+		if (playHead != null) {
+			return playHead / duration;
+		} else {
+			return null;
+		}
 	}
 
 	public Status getStatus() {
@@ -154,6 +172,12 @@ public abstract class Animation {
 		this.node = node;
 	}
 
-	public abstract void animate();
+	public void animate() {
+		if (isRunning()) {
+			animateImpl();
+		}
+	}
+
+	public abstract void animateImpl();
 
 }
