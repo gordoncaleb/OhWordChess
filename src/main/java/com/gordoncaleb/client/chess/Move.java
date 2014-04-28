@@ -218,7 +218,7 @@ public class Move {
 	public static String toString(long moveLong) {
 		String moveString;
 		if (hasPieceTaken(moveLong)) {
-			Piece pieceTaken = PieceUtils.buildPiece(getPieceTakenID(moveLong), null, getPieceTakenRow(moveLong), getPieceTakenCol(moveLong),
+			Piece pieceTaken = new Piece(getPieceTakenID(moveLong), null, getPieceTakenRow(moveLong), getPieceTakenCol(moveLong),
 					getPieceTakenHasMoved(moveLong));
 			moveString = "Moving from " + getFromRow(moveLong) + "," + getFromCol(moveLong) + " to " + getToRow(moveLong) + "," + getToCol(moveLong)
 					+ " Move Note: " + getNote(moveLong).toString() + " Value:" + getValue(moveLong) + " PieceTaken: " + pieceTaken.toString();
@@ -251,7 +251,7 @@ public class Move {
 		}
 
 		if (hasPieceTaken(moveLong)) {
-			xmlMove += PieceUtils.buildPiece(getPieceTakenID(moveLong), null, getPieceTakenRow(moveLong), getPieceTakenCol(moveLong),
+			xmlMove += new Piece(getPieceTakenID(moveLong), null, getPieceTakenRow(moveLong), getPieceTakenCol(moveLong),
 					getPieceTakenHasMoved(moveLong)).toXML();
 		}
 

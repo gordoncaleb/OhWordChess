@@ -7,30 +7,30 @@ import com.gordoncaleb.client.chess.Board;
 import com.gordoncaleb.client.chess.Move;
 import com.gordoncaleb.client.chess.Move.MoveNote;
 import com.gordoncaleb.client.chess.Side;
+import com.gordoncaleb.client.pieces.Piece.PieceID;
 
-public class Knight extends Piece {
+public class Knight {
 
 	private static int[][] KNIGHTMOVES = { { 2, 2, -2, -2, 1, -1, 1, -1 }, { 1, -1, 1, -1, 2, 2, -2, -2 } };
 
-	public Knight(PieceID id, Side player, int row, int col, boolean moved) {
-		super(id, player, row, col, moved);
-		// TODO Auto-generated constructor stub
+	private Knight() {
+
 	}
 
-	public PieceID getPieceID() {
-		return PieceID.KNIGHT;
-	}
-
-	public String getName() {
+	public static String getName() {
 		return "Knight";
 	}
 
-	public String getStringID() {
+	public static String getStringID() {
 		return "N";
 	}
 
-	@Override
-	public void generateValidMoves(Board board, long[] nullMoveInfo, long[] posBitBoard, ArrayList<Long> validMoves) {
+	public static void generateValidMoves(Piece piece, Board board, long[] nullMoveInfo, long[] posBitBoard, ArrayList<Long> validMoves) {
+
+		int row = piece.getRow();
+		int col = piece.getCol();
+		Side player = piece.getSide();
+
 		int nextRow;
 		int nextCol;
 		int value;
@@ -48,7 +48,7 @@ public class Knight extends Piece {
 				bonus = PositionBonus.getKnightMoveBonus(row, col, nextRow, nextCol, player);
 
 				if (pieceStatus == PositionStatus.NO_PIECE) {
-					if (isValidMove(nextRow, nextCol, nullMoveInfo)) {
+					if (piece.isValidMove(nextRow, nextCol, nullMoveInfo)) {
 
 						if ((nullMoveInfo[0] & BitBoard.getMask(nextRow, nextCol)) != 0) {
 							value = -myValue >> 1;
@@ -62,7 +62,7 @@ public class Knight extends Piece {
 				}
 
 				if (pieceStatus == PositionStatus.ENEMY) {
-					if (isValidMove(nextRow, nextCol, nullMoveInfo)) {
+					if (piece.isValidMove(nextRow, nextCol, nullMoveInfo)) {
 						value = board.getPieceValue(nextRow, nextCol);
 
 						if ((nullMoveInfo[0] & BitBoard.getMask(nextRow, nextCol)) != 0) {
@@ -81,15 +81,11 @@ public class Knight extends Piece {
 
 	}
 
-	@Override
-	public void getNullMoveInfo(Board board, long[] nullMoveInfo, long updown, long left, long right, long kingBitBoard, long kingCheckVectors,
-			long friendly) {
-		// TODO Auto-generated method stub
-		
-	}
+	public static void getNullMoveInfo(Piece piece, Board board, long[] nullMoveInfo) {
 
-	@Override
-	public void getNullMoveInfo(Board board, long[] nullMoveInfo) {
+		int row = piece.getRow();
+		int col = piece.getCol();
+		Side player = piece.getSide();
 
 		int nextRow;
 		int nextCol;
@@ -104,18 +100,13 @@ public class Knight extends Piece {
 			if (pieceStatus != PositionStatus.OFF_BOARD) {
 
 				if (board.getPieceID(nextRow, nextCol) == PieceID.KING && pieceStatus == PositionStatus.ENEMY) {
-					nullMoveInfo[1] &= getBit();
+					nullMoveInfo[1] &= piece.getBit();
 				}
 
 				nullMoveInfo[0] |= BitBoard.getMask(nextRow, nextCol);
 			}
 		}
 
-	}
-
-	@Override
-	public Piece getCopy() {
-		return new Knight(id, player, row, col, moved);
 	}
 
 }

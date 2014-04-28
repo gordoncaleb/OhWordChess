@@ -20,6 +20,10 @@ public class Group extends UIObject2D {
 	public void remove(UIObject2D d) {
 		this.uiObjects.remove(d);
 	}
+	
+	public void clear(){
+		this.uiObjects.clear();
+	}
 
 	@Override
 	public void propagateAndAnimate(double elapsedTime) {

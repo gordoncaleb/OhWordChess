@@ -7,7 +7,7 @@ import com.gordoncaleb.client.chess.Board;
 import com.gordoncaleb.client.chess.Move;
 import com.gordoncaleb.client.chess.Side;
 
-public abstract class Piece {
+public class Piece {
 
 	public static enum PieceID {
 		ROOK, KNIGHT, BISHOP, QUEEN, KING, PAWN
@@ -114,9 +114,7 @@ public abstract class Piece {
 			return false;
 		}
 
-		if (piece.getRow() == row && piece.getCol() == col
-				&& piece.getSide() == player
-				&& piece.getPieceID() == this.getPieceID()) {
+		if (piece.getRow() == row && piece.getCol() == col && piece.getSide() == player && piece.getPieceID() == this.getPieceID()) {
 			return true;
 		} else {
 			return false;
@@ -141,19 +139,110 @@ public abstract class Piece {
 		this.id = id;
 	}
 
-	public abstract String getStringID();
+	public String getStringID() {
 
-	public abstract String getName();
+		switch (id) {
+		case BISHOP:
+			return Bishop.getStringID();
+		case KING:
+			return King.getStringID();
+		case KNIGHT:
+			return Knight.getStringID();
+		case PAWN:
+			return Pawn.getStringID();
+		case QUEEN:
+			return Queen.getStringID();
+		case ROOK:
+			return Rook.getStringID();
+		default:
+			return "";
+		}
 
-	public abstract void generateValidMoves(Board board, long[] nullMoveInfo,
-			long[] posBitBoard, ArrayList<Long> validMoves);
+	}
 
-	public abstract void getNullMoveInfo(Board board, long[] nullMoveInfo,
-			long updown, long left, long right, long kingBitBoard,
-			long kingCheckVectors, long friendly);
+	public String getName() {
 
-	public abstract void getNullMoveInfo(Board board, long[] nullMoveBitBoards);
+		switch (id) {
+		case BISHOP:
+			return Bishop.getName();
+		case KING:
+			return King.getName();
+		case KNIGHT:
+			return Knight.getName();
+		case PAWN:
+			return Pawn.getName();
+		case QUEEN:
+			return Queen.getName();
+		case ROOK:
+			return Rook.getName();
+		default:
+			return "";
+		}
 
-	public abstract Piece getCopy();
+	}
+
+	public void generateValidMoves(Board board, long[] nullMoveInfo, long[] posBitBoard, ArrayList<Long> validMoves) {
+		switch (id) {
+		case BISHOP:
+			Bishop.generateValidMoves(this, board, nullMoveInfo, posBitBoard, validMoves);
+		case KING:
+			King.generateValidMoves(this, board, nullMoveInfo, posBitBoard, validMoves);
+		case KNIGHT:
+			Knight.generateValidMoves(this, board, nullMoveInfo, posBitBoard, validMoves);
+		case PAWN:
+			Pawn.generateValidMoves(this, board, nullMoveInfo, posBitBoard, validMoves);
+		case QUEEN:
+			Queen.generateValidMoves(this, board, nullMoveInfo, posBitBoard, validMoves);
+		case ROOK:
+			Rook.generateValidMoves(this, board, nullMoveInfo, posBitBoard, validMoves);
+		}
+	}
+
+	public void getNullMoveInfo(Board board, long[] nullMoveInfo, long updown, long left, long right, long kingBitBoard, long kingCheckVectors,
+			long friendly) {
+		switch (id) {
+		case BISHOP:
+			Bishop.getNullMoveInfo(this, board, nullMoveInfo, updown, left, right, kingBitBoard, kingCheckVectors, friendly);
+		case KING:
+			// King.getNullMoveInfo(this, board, nullMoveInfo, updown, left,
+			// right, kingBitBoard, kingCheckVectors, friendly);
+		case KNIGHT:
+			// Knight.getNullMoveInfo(this, board, nullMoveInfo, updown, left,
+			// right, kingBitBoard, kingCheckVectors, friendly);
+		case PAWN:
+			// Pawn.getNullMoveInfo(this, board, nullMoveInfo, updown, left,
+			// right, kingBitBoard, kingCheckVectors, friendly);
+		case QUEEN:
+			Queen.getNullMoveInfo(this, board, nullMoveInfo, updown, left, right, kingBitBoard, kingCheckVectors, friendly);
+		case ROOK:
+			Rook.getNullMoveInfo(this, board, nullMoveInfo, updown, left, right, kingBitBoard, kingCheckVectors, friendly);
+		}
+	}
+
+	// public void getNullMoveInfo(Board board, long[] nullMoveBitBoards) {
+	// switch (id) {
+	// case BISHOP:
+	// Bishop.getNullMoveInfo(piece, board, nullMoveInfo);
+	// case KING:
+	// //King.getNullMoveInfo(this, board, nullMoveInfo, updown, left, right,
+	// kingBitBoard, kingCheckVectors, friendly);
+	// case KNIGHT:
+	// //Knight.getNullMoveInfo(this, board, nullMoveInfo, updown, left, right,
+	// kingBitBoard, kingCheckVectors, friendly);
+	// case PAWN:
+	// //Pawn.getNullMoveInfo(this, board, nullMoveInfo, updown, left, right,
+	// kingBitBoard, kingCheckVectors, friendly);
+	// case QUEEN:
+	// Queen.getNullMoveInfo(this, board, nullMoveInfo, updown, left, right,
+	// kingBitBoard, kingCheckVectors, friendly);
+	// case ROOK:
+	// Rook.getNullMoveInfo(this, board, nullMoveInfo, updown, left, right,
+	// kingBitBoard, kingCheckVectors, friendly);
+	// }
+	// }
+
+	public Piece getCopy() {
+		return new Piece(id, player, row, col, moved);
+	}
 
 }

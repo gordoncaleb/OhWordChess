@@ -9,10 +9,11 @@ import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.gordoncaleb.client.chess.Side;
 import com.gordoncaleb.client.pieces.Piece.PieceID;
 
-public class ImageLoader {
+public class ResourceLoader {
 
 	public static final String BLACKBISHOP = "pieces/black_bishop.png";
 	public static final String BLACKKING = "pieces/black_king.png";
@@ -29,7 +30,7 @@ public class ImageLoader {
 
 	public static Map<String, ImageElement> images = new HashMap<String, ImageElement>();
 
-	public static void loadAllImages() {
+	public static void loadAllImages(final ResourceLoadEventHandler handler) {
 
 		List<String> imageNames = new ArrayList<String>();
 
@@ -47,23 +48,34 @@ public class ImageLoader {
 		imageNames.add(WHITEQUEEN);
 		imageNames.add(WHITEROOK);
 
-		for (String name : imageNames) {
-			loadImage(name);
+		final int numResources = imageNames.size();
+
+		LoadHandler lh = new LoadHandler() {
+			int i = 0;
+
+			@Override
+			public void onLoad(LoadEvent event) {
+				i++;
+				handler.loadProgress(i / (double) numResources);
+				if (i == numResources) {
+					handler.loadComplete();
+				}
+			}
+
+		};
+
+		for (int i = 0; i < imageNames.size(); i++) {
+			loadImage(imageNames.get(i), lh);
 		}
 
 	}
 
-	public static void loadImage(final String name) {
-		final Image img = new Image(name);
-		img.addLoadHandler(new LoadHandler() {
-			public void onLoad(LoadEvent event) {
-				images.put(name, (ImageElement) img.getElement().cast());
-			}
-		});
-	}
-
 	public static ImageElement getImage(String name) {
 		return images.get(name);
+	}
+
+	public static ImageElement getImage(PieceID pieceId, Side side) {
+		return getImage(getImageName(pieceId, side));
 	}
 
 	public static void loadImage(final String name, final LoadHandler handler) {
@@ -74,6 +86,8 @@ public class ImageLoader {
 				handler.onLoad(event);
 			}
 		});
+		img.setVisible(false);
+		RootPanel.get().add(img);
 	}
 
 	public static String getImageName(PieceID id, Side side) {

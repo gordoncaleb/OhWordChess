@@ -29,49 +29,8 @@ public class PieceUtils {
 
 		id = charIDtoPieceID(type);
 
-		if (id != null) {
+		return new Piece(id, player, row, col, hasMoved);
 
-			switch (id) {
-			case ROOK:
-				return new Rook(id, player, row, col, hasMoved);
-			case KNIGHT:
-				return new Knight(id, player, row, col, hasMoved);
-			case BISHOP:
-				return new Bishop(id, player, row, col, hasMoved);
-			case QUEEN:
-				return new Queen(id, player, row, col, hasMoved);
-			case KING:
-				return new King(id, player, row, col, hasMoved);
-			case PAWN:
-				return new Pawn(id, player, row, col, hasMoved);
-			default:
-				return null;
-			}
-
-		} else {
-			return null;
-		}
-
-	}
-
-	public static Piece buildPiece(PieceID id, Side player, int row, int col, boolean hasMoved) {
-
-		switch (id) {
-		case ROOK:
-			return new Rook(id, player, row, col, hasMoved);
-		case KNIGHT:
-			return new Knight(id, player, row, col, hasMoved);
-		case BISHOP:
-			return new Bishop(id, player, row, col, hasMoved);
-		case QUEEN:
-			return new Queen(id, player, row, col, hasMoved);
-		case KING:
-			return new King(id, player, row, col, hasMoved);
-		case PAWN:
-			return new Pawn(id, player, row, col, hasMoved);
-		default:
-			return null;
-		}
 	}
 
 	public static PieceID charIDtoPieceID(char type) {

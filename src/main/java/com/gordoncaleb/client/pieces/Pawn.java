@@ -7,30 +7,27 @@ import com.gordoncaleb.client.chess.Board;
 import com.gordoncaleb.client.chess.Move;
 import com.gordoncaleb.client.chess.Move.MoveNote;
 import com.gordoncaleb.client.chess.Side;
+import com.gordoncaleb.client.pieces.Piece.PieceID;
 
-public class Pawn extends Piece {
+public class Pawn {
 
-	public Pawn(PieceID id, Side player, int row, int col, boolean moved) {
-		super(id, player, row, col, moved);
+	private Pawn() {
+
 	}
 
-	@Override
-	public PieceID getPieceID() {
-		return PieceID.PAWN;
-	}
-
-	@Override
-	public String getName() {
+	public static String getName() {
 		return "Pawn";
 	}
 
-	@Override
-	public String getStringID() {
+	public static String getStringID() {
 		return "P";
 	}
 
-	@Override
-	public void generateValidMoves(Board board, long[] nullMoveInfo, long[] posBitBoard, ArrayList<Long> validMoves) {
+	public static void generateValidMoves(Piece piece, Board board, long[] nullMoveInfo, long[] posBitBoard, ArrayList<Long> validMoves) {
+		int row = piece.getRow();
+		int col = piece.getCol();
+		Side player = piece.getSide();
+		boolean moved = piece.hasMoved();
 
 		int dir;
 		int fifthRank;
@@ -55,7 +52,7 @@ public class Pawn extends Piece {
 
 		if (board.checkPiece(row + dir, col, player) == PositionStatus.NO_PIECE) {
 
-			if (isValidMove(row + dir, col, nullMoveInfo)) {
+			if (piece.isValidMove(row + dir, col, nullMoveInfo)) {
 
 				moveLong = Move.moveLong(row, col, row + dir, col, 0, MoveNote.NONE);
 
@@ -78,7 +75,7 @@ public class Pawn extends Piece {
 
 			if (!moved && board.checkPiece(row + 2 * dir, col, player) == PositionStatus.NO_PIECE) {
 
-				if (isValidMove(row + 2 * dir, col, nullMoveInfo)) {
+				if (piece.isValidMove(row + 2 * dir, col, nullMoveInfo)) {
 
 					value = PositionBonus.getPawnMoveBonus(row, col, row + 2 * dir, col, player);
 
@@ -97,7 +94,7 @@ public class Pawn extends Piece {
 		for (int i = 0; i < lr.length; i++) {
 			if (board.checkPiece(row + dir, col + lr[i], player) == PositionStatus.ENEMY) {
 
-				if (isValidMove(row + dir, col + lr[i], nullMoveInfo)) {
+				if (piece.isValidMove(row + dir, col + lr[i], nullMoveInfo)) {
 
 					moveLong = Move.moveLong(row, col, row + dir, col + lr[i]);
 
@@ -130,7 +127,7 @@ public class Pawn extends Piece {
 
 					if ((Move.getToCol(board.getLastMoveMade()) == (col + lr[i])) && Move.getNote(board.getLastMoveMade()) == MoveNote.PAWN_LEAP) {
 
-						if (isValidMove(row + dir, col + lr[i], nullMoveInfo)) {
+						if (piece.isValidMove(row + dir, col + lr[i], nullMoveInfo)) {
 
 							value = board.getPieceValue(fifthRank, col + lr[i]);
 
@@ -150,15 +147,11 @@ public class Pawn extends Piece {
 
 	}
 
-	@Override
-	public void getNullMoveInfo(Board board, long[] nullMoveInfo, long updown, long left, long right, long kingBitBoard, long kingCheckVectors,
-			long friendly) {
-		// TODO Auto-generated method stub
+	public static void getNullMoveInfo(Piece piece, Board board, long[] nullMoveInfo) {
 
-	}
-
-	@Override
-	public void getNullMoveInfo(Board board, long[] nullMoveInfo) {
+		int row = piece.getRow();
+		int col = piece.getCol();
+		Side player = piece.getSide();
 
 		int dir;
 		PositionStatus pieceStatus;
@@ -174,7 +167,7 @@ public class Pawn extends Piece {
 		if (pieceStatus != PositionStatus.OFF_BOARD) {
 
 			if (board.getPieceID(row + dir, col - 1) == PieceID.KING && pieceStatus == PositionStatus.ENEMY) {
-				nullMoveInfo[1] &= getBit();
+				nullMoveInfo[1] &= piece.getBit();
 			}
 
 			nullMoveInfo[0] |= BitBoard.getMask(row + dir, col - 1);
@@ -185,17 +178,12 @@ public class Pawn extends Piece {
 		if (pieceStatus != PositionStatus.OFF_BOARD) {
 
 			if (board.getPieceID(row + dir, col + 1) == PieceID.KING && pieceStatus == PositionStatus.ENEMY) {
-				nullMoveInfo[1] &= getBit();
+				nullMoveInfo[1] &= piece.getBit();
 			}
 
 			nullMoveInfo[0] |= BitBoard.getMask(row + dir, col + 1);
 		}
 
-	}
-
-	@Override
-	public Piece getCopy() {
-		return new Pawn(id, player, row, col, moved);
 	}
 
 }

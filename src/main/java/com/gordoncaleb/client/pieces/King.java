@@ -8,22 +8,18 @@ import com.gordoncaleb.client.chess.Move;
 import com.gordoncaleb.client.chess.Move.MoveNote;
 import com.gordoncaleb.client.chess.Side;
 
-public class King extends Piece {
+public class King {
 	private static int[][] KINGMOVES = { { 1, 1, -1, -1, 1, -1, 0, 0 }, { 1, -1, 1, -1, 0, 0, 1, -1 } };
 
-	public King(PieceID id, Side player, int row, int col, boolean moved) {
-		super(id, player, row, col, moved);
+	private King() {
+
 	}
 
-	public PieceID getPieceID() {
-		return PieceID.KING;
-	}
-
-	public String getName() {
+	public static String getName() {
 		return "King";
 	}
 
-	public String getStringID() {
+	public static String getStringID() {
 		return "K";
 	}
 
@@ -91,8 +87,12 @@ public class King extends Piece {
 	// // }
 	// }
 
-	@Override
-	public void generateValidMoves(Board board, long[] nullMoveInfo, long[] posBitBoard, ArrayList<Long> validMoves) {
+	public static void generateValidMoves(Piece piece, Board board, long[] nullMoveInfo, long[] posBitBoard, ArrayList<Long> validMoves) {
+
+		int row = piece.getRow();
+		int col = piece.getCol();
+		Side player = piece.getSide();
+		boolean moved = piece.hasMoved();
 
 		int nextRow;
 		int nextCol;
@@ -106,7 +106,7 @@ public class King extends Piece {
 
 			if (pieceStatus == PositionStatus.NO_PIECE) {
 
-				if (isValidMove(nextRow, nextCol, nullMoveInfo)) {
+				if (piece.isValidMove(nextRow, nextCol, nullMoveInfo)) {
 					if (!moved && (!board.farRookHasMoved(player) || !board.nearRookHasMoved(player))) {
 						// The player loses points for losing the ability to
 						// castle
@@ -120,7 +120,7 @@ public class King extends Piece {
 			}
 
 			if (pieceStatus == PositionStatus.ENEMY) {
-				if (isValidMove(nextRow, nextCol, nullMoveInfo)) {
+				if (piece.isValidMove(nextRow, nextCol, nullMoveInfo)) {
 					moveLong = Move.moveLong(row, col, nextRow, nextCol, board.getPieceValue(nextRow, nextCol), MoveNote.NONE,
 							board.getPiece(nextRow, nextCol));
 					validMoves.add(moveLong);
@@ -133,8 +133,8 @@ public class King extends Piece {
 
 		if (!board.isInCheck()) {
 			// add possible castle move
-			if (canCastleFar(board, player, nullMoveInfo, allPosBitBoard)) {
-				if (isValidMove(row, 2, nullMoveInfo)) {
+			if (canCastleFar(piece, board, player, nullMoveInfo, allPosBitBoard)) {
+				if (piece.isValidMove(row, 2, nullMoveInfo)) {
 					if (col > 3) {
 						validMoves.add(Move.moveLong(row, col, row, 2, Values.FAR_CASTLE_VALUE, MoveNote.CASTLE_FAR));
 					} else {
@@ -143,8 +143,8 @@ public class King extends Piece {
 				}
 			}
 
-			if (canCastleNear(board, player, nullMoveInfo, allPosBitBoard)) {
-				if (isValidMove(row, 6, nullMoveInfo)) {
+			if (canCastleNear(piece, board, player, nullMoveInfo, allPosBitBoard)) {
+				if (piece.isValidMove(row, 6, nullMoveInfo)) {
 					if (col < 5) {
 						validMoves.add(Move.moveLong(row, col, row, 6, Values.NEAR_CASTLE_VALUE, MoveNote.CASTLE_NEAR));
 					} else {
@@ -157,7 +157,10 @@ public class King extends Piece {
 
 	}
 
-	public void getNullMoveInfo(Board board, long[] nullMoveInfo) {
+	public static void getNullMoveInfo(Piece piece, Board board, long[] nullMoveInfo) {
+		int row = piece.getRow();
+		int col = piece.getCol();
+		Side player = piece.getSide();
 
 		for (int i = 0; i < 8; i++) {
 			if (board.checkPiece(row + KINGMOVES[0][i], col + KINGMOVES[1][i], player) != PositionStatus.OFF_BOARD) {
@@ -165,12 +168,6 @@ public class King extends Piece {
 			}
 		}
 
-	}
-
-	@Override
-	public void getNullMoveInfo(Board board, long[] nullMoveInfo, long updown, long left, long right, long kingBitBoard, long kingCheckVectors,
-			long friendly) {
-		
 	}
 
 	public static long getKingCheckVectors(long king, long updown, long left, long right) {
@@ -239,7 +236,7 @@ public class King extends Piece {
 		return checkVectors;
 	}
 
-	public boolean isValidMove(int toRow, int toCol, long[] nullMoveInfo) {
+	public static boolean isValidMove(int toRow, int toCol, long[] nullMoveInfo) {
 		long mask = BitBoard.getMask(toRow, toCol);
 
 		// String nullmove0 = BitBoard.printBitBoard(nullMoveInfo[0]);
@@ -253,7 +250,10 @@ public class King extends Piece {
 		}
 	}
 
-	public boolean canCastleFar(Board board, Side player, long[] nullMoveInfo, long allPosBitBoard) {
+	public static boolean canCastleFar(Piece piece, Board board, Side player, long[] nullMoveInfo, long allPosBitBoard) {
+
+		int row = piece.getRow();
+		int col = piece.getCol();
 
 		if (board.kingHasMoved(player) || board.farRookHasMoved(player)) {
 			return false;
@@ -264,7 +264,7 @@ public class King extends Piece {
 		int rookCol = board.getRookStartingCol(player, 0);
 		long rookToCastleMask = BitBoard.getCastleMask(rookCol, 3, player);
 
-		allPosBitBoard ^= BitBoard.getMask(row, rookCol) | getBit();
+		allPosBitBoard ^= BitBoard.getMask(row, rookCol) | piece.getBit();
 
 		if ((kingToCastleMask & nullMoveInfo[0]) == 0) {
 			if (((kingToCastleMask | rookToCastleMask) & allPosBitBoard) == 0) {
@@ -276,7 +276,10 @@ public class King extends Piece {
 
 	}
 
-	public boolean canCastleNear(Board board, Side player, long[] nullMoveInfo, long allPosBitBoard) {
+	public static boolean canCastleNear(Piece piece, Board board, Side player, long[] nullMoveInfo, long allPosBitBoard) {
+
+		int row = piece.getRow();
+		int col = piece.getCol();
 
 		if (board.kingHasMoved(player) || board.nearRookHasMoved(player)) {
 			return false;
@@ -287,7 +290,7 @@ public class King extends Piece {
 		int rookCol = board.getRookStartingCol(player, 1);
 		long rookToCastleMask = BitBoard.getCastleMask(rookCol, 5, player);
 
-		allPosBitBoard ^= BitBoard.getMask(row, rookCol) | getBit();
+		allPosBitBoard ^= BitBoard.getMask(row, rookCol) | piece.getBit();
 
 		// System.out.println(BitBoard.printBitBoard(kingToCastleMask));
 		// System.out.println(BitBoard.printBitBoard(rookToCastleMask));
@@ -300,11 +303,6 @@ public class King extends Piece {
 		}
 
 		return false;
-	}
-
-	@Override
-	public Piece getCopy() {
-		return new King(id, player, row, col, moved);
 	}
 
 }

@@ -7,24 +7,28 @@ import com.gordoncaleb.client.chess.Board;
 import com.gordoncaleb.client.chess.Move;
 import com.gordoncaleb.client.chess.Move.MoveNote;
 import com.gordoncaleb.client.chess.Side;
+import com.gordoncaleb.client.pieces.Piece.PieceID;
 
-public class Bishop extends Piece {
-	private static final int[][] BISHOPMOVES = { { 1, 1, -1, -1 },
-			{ 1, -1, 1, -1 } };
+public class Bishop {
+	private static final int[][] BISHOPMOVES = { { 1, 1, -1, -1 }, { 1, -1, 1, -1 } };
 
-	public Bishop(PieceID id, Side player, int row, int col, boolean moved) {
-		super(id, player, row, col, moved);
+	private Bishop() {
+
 	}
 
-	public PieceID getPieceID() {
-		return PieceID.BISHOP;
-	}
+	// public Bishop(PieceID id, Side player, int row, int col, boolean moved) {
+	// super(id, player, row, col, moved);
+	// }
 
-	public String getName() {
+	// public static PieceID getPieceID() {
+	// return PieceID.BISHOP;
+	// }
+
+	public static String getName() {
 		return "Bishop";
 	}
 
-	public String getStringID() {
+	public static String getStringID() {
 		return "B";
 	}
 
@@ -69,8 +73,11 @@ public class Bishop extends Piece {
 	// }
 	// }
 
-	public void generateValidMoves(Board board, long[] nullMoveInfo,
-			long[] posBitBoard, ArrayList<Long> validMoves) {
+	public static void generateValidMoves(Piece piece, Board board, long[] nullMoveInfo, long[] posBitBoard, ArrayList<Long> validMoves) {
+
+		int row = piece.getRow();
+		int col = piece.getCol();
+		Side player = piece.getSide();
 
 		int nextRow;
 		int nextCol;
@@ -86,7 +93,7 @@ public class Bishop extends Piece {
 
 			while (pieceStatus == PositionStatus.NO_PIECE) {
 
-				if (isValidMove(nextRow, nextCol, nullMoveInfo)) {
+				if (piece.isValidMove(nextRow, nextCol, nullMoveInfo)) {
 
 					if ((nullMoveInfo[0] & BitBoard.getMask(nextRow, nextCol)) != 0) {
 						value = -Values.BISHOP_VALUE >> 1;
@@ -94,8 +101,7 @@ public class Bishop extends Piece {
 						value = 0;
 					}
 
-					moveLong = Move.moveLong(row, col, nextRow, nextCol, value,
-							MoveNote.NONE);
+					moveLong = Move.moveLong(row, col, nextRow, nextCol, value, MoveNote.NONE);
 
 					validMoves.add(moveLong);
 				}
@@ -108,15 +114,14 @@ public class Bishop extends Piece {
 			}
 
 			if (pieceStatus == PositionStatus.ENEMY) {
-				if (isValidMove(nextRow, nextCol, nullMoveInfo)) {
+				if (piece.isValidMove(nextRow, nextCol, nullMoveInfo)) {
 					value = board.getPieceValue(nextRow, nextCol);
 
 					if ((nullMoveInfo[0] & BitBoard.getMask(nextRow, nextCol)) != 0) {
 						value -= Values.BISHOP_VALUE >> 1;
 					}
 
-					moveLong = Move.moveLong(row, col, nextRow, nextCol, value,
-							MoveNote.NONE, board.getPiece(nextRow, nextCol));
+					moveLong = Move.moveLong(row, col, nextRow, nextCol, value, MoveNote.NONE, board.getPiece(nextRow, nextCol));
 					validMoves.add(moveLong);
 				}
 			}
@@ -126,11 +131,12 @@ public class Bishop extends Piece {
 
 	}
 
-	public void getNullMoveInfo(Board board, long[] nullMoveInfo, long updown,
-			long left, long right, long kingBitBoard, long kingCheckVectors,
-			long friendly) {
+	public static void getNullMoveInfo(Piece piece, Board board, long[] nullMoveInfo, long updown, long left, long right, long kingBitBoard,
+			long kingCheckVectors, long friendly) {
 
-		long bitPiece = getBit();
+		long bitPiece = piece.getBit();
+		int row = piece.getRow();
+		int col = piece.getCol();
 
 		// up ------------------------------------------------------------
 		long temp = bitPiece;
@@ -162,8 +168,7 @@ public class Bishop extends Piece {
 					if ((temp & friendly) != 0) {
 						temp = temp >>> 9;
 						if ((temp & kingCheckVectors) != 0) {
-							board.getPiece(r - 1, c - 1).setBlockingVector(
-									BitBoard.getNegSlope(r, c));
+							board.getPiece(r - 1, c - 1).setBlockingVector(BitBoard.getNegSlope(r, c));
 						}
 					}
 				}
@@ -196,8 +201,7 @@ public class Bishop extends Piece {
 					if ((temp & friendly) != 0) {
 						temp = temp << 7;
 						if ((temp & kingCheckVectors) != 0) {
-							board.getPiece(r + 1, c - 1).setBlockingVector(
-									BitBoard.getPosSlope(r, c));
+							board.getPiece(r + 1, c - 1).setBlockingVector(BitBoard.getPosSlope(r, c));
 						}
 					}
 				}
@@ -235,8 +239,7 @@ public class Bishop extends Piece {
 					if ((temp & friendly) != 0) {
 						temp = temp >> 7;
 						if ((temp & kingCheckVectors) != 0) {
-							board.getPiece(r - 1, c + 1).setBlockingVector(
-									BitBoard.getPosSlope(r, c));
+							board.getPiece(r - 1, c + 1).setBlockingVector(BitBoard.getPosSlope(r, c));
 						}
 					}
 				}
@@ -269,8 +272,7 @@ public class Bishop extends Piece {
 					if ((temp & friendly) != 0) {
 						temp = temp << 9;
 						if ((temp & kingCheckVectors) != 0) {
-							board.getPiece(r + 1, c + 1).setBlockingVector(
-									BitBoard.getNegSlope(r, c));
+							board.getPiece(r + 1, c + 1).setBlockingVector(BitBoard.getNegSlope(r, c));
 						}
 					}
 				}
@@ -280,17 +282,21 @@ public class Bishop extends Piece {
 
 	}
 
-	public void getNullMoveInfo(Board board, long[] nullMoveInfo) {
+	public static void getNullMoveInfo(Piece piece, Board board, long[] nullMoveInfo) {
 		long bitAttackVector = 0;
 		long bitAttackCompliment = 0;
 		boolean inCheck = false;
 		Piece blockingPiece;
 
+		int row = piece.getRow();
+		int col = piece.getCol();
+		Side player = piece.getSide();
+
 		int nextRow;
 		int nextCol;
 		PositionStatus pieceStatus;
 
-		long bitPosition = getBit();
+		long bitPosition = piece.getBit();
 
 		int i = 1;
 		for (int d = 0; d < 4; d++) {
@@ -336,10 +342,8 @@ public class Bishop extends Piece {
 				}
 
 				if (pieceStatus != PositionStatus.OFF_BOARD) {
-					if (board.getPieceID(nextRow, nextCol) == PieceID.KING
-							&& board.getPiece(nextRow, nextCol).getSide() != player) {
-						blockingPiece.setBlockingVector(bitAttackCompliment
-								| bitAttackVector | bitPosition);
+					if (board.getPieceID(nextRow, nextCol) == PieceID.KING && board.getPiece(nextRow, nextCol).getSide() != player) {
+						blockingPiece.setBlockingVector(bitAttackCompliment | bitAttackVector | bitPosition);
 					}
 				}
 
@@ -362,11 +366,6 @@ public class Bishop extends Piece {
 			i = 1;
 		}
 
-	}
-
-	@Override
-	public Piece getCopy() {
-		return new Bishop(id, player, row, col, moved);
 	}
 
 }

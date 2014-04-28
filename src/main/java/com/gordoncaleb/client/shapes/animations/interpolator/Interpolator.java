@@ -12,7 +12,8 @@ public abstract class Interpolator {
 	public static final Interpolator EASE_BOTH = new Interpolator() {
 		@Override
 		public double curve(double fraction) {
-			return fraction;
+
+			return Math.pow(fraction, 2);
 		}
 	};
 

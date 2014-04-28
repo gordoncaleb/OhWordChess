@@ -7,28 +7,31 @@ import com.gordoncaleb.client.chess.Board;
 import com.gordoncaleb.client.chess.Move;
 import com.gordoncaleb.client.chess.Move.MoveNote;
 import com.gordoncaleb.client.chess.Side;
+import com.gordoncaleb.client.pieces.Piece.PieceID;
 
-public class Rook extends Piece {
+public class Rook {
 
 	private static int[][] ROOKMOVES = { { 1, -1, 0, 0 }, { 0, 0, 1, -1 } };
 
-	public Rook(PieceID id, Side player, int row, int col, boolean moved) {
-		super(id, player, row, col, moved);
+	private Rook() {
+
 	}
 
-	public PieceID getPieceID() {
-		return PieceID.ROOK;
-	}
-
-	public String getName() {
+	public static String getName() {
 		return "Rook";
 	}
 
-	public String getStringID() {
+	public static String getStringID() {
 		return "R";
 	}
 
-	public void generateMoves(Board board, ArrayList<Long> moves) {
+	public static void generateMoves(Piece piece, Board board, ArrayList<Long> moves) {
+
+		int row = piece.getRow();
+		int col = piece.getCol();
+		Side player = piece.getSide();
+		boolean moved = piece.hasMoved();
+
 		int nextRow;
 		int nextCol;
 		int value;
@@ -79,12 +82,17 @@ public class Rook extends Piece {
 
 	}
 
-	public void generateValidMoves(Board board, long[] nullMoveInfo, long[] posBitBoard, ArrayList<Long> validMoves) {
+	public static void generateValidMoves(Piece piece, Board board, long[] nullMoveInfo, long[] posBitBoard, ArrayList<Long> validMoves) {
 		int nextRow;
 		int nextCol;
 		int value;
 		PositionStatus pieceStatus;
 		Long moveLong;
+
+		int row = piece.getRow();
+		int col = piece.getCol();
+		Side player = piece.getSide();
+		boolean moved = piece.hasMoved();
 
 		int i = 1;
 		for (int d = 0; d < 4; d++) {
@@ -94,7 +102,7 @@ public class Rook extends Piece {
 
 			while (pieceStatus == PositionStatus.NO_PIECE) {
 
-				if (isValidMove(nextRow, nextCol, nullMoveInfo)) {
+				if (piece.isValidMove(nextRow, nextCol, nullMoveInfo)) {
 
 					if (!moved && !board.kingHasMoved(player)) {
 						value = Values.CASTLE_ABILITY_LOST_VALUE;
@@ -119,7 +127,7 @@ public class Rook extends Piece {
 			}
 
 			if (pieceStatus == PositionStatus.ENEMY) {
-				if (isValidMove(nextRow, nextCol, nullMoveInfo)) {
+				if (piece.isValidMove(nextRow, nextCol, nullMoveInfo)) {
 
 					if (!moved && !board.kingHasMoved(player)) {
 						value = board.getPieceValue(nextRow, nextCol) + Values.CASTLE_ABILITY_LOST_VALUE;
@@ -142,43 +150,53 @@ public class Rook extends Piece {
 
 	}
 
-//	public static void main(String[] args) {
-//		String b = "R0,N0,B0,Q0,K0,__,N0,R0," + "P0,P0,P0,P0,__,P0,P0,P0," + "__,__,__,__,__,__,__,__," + "__,__,__,__,P1,__,__,__,"
-//				+ "__,B0,__,__,__,__,__,__," + "__,__,n0,p1,__,__,__,__," + "p0,p0,p0,__,p0,p0,p0,p0," + "r0,__,b0,q0,k0,b0,n0,r0,";
-//
-//		b = "<board>\n<setup>\n" + b + "</setup>\n<turn>WHITE</turn>\n</board>";
-//
-//		Board board = XMLParser.XMLToBoard(b);
-//
-//		Piece piece = board.getPiece(4, 1);
-//		long[] nullMoveInfo = new long[3];
-//
-//		Side turn = board.getTurn();
-//		long updown = ~(board.getAllPosBitBoard()[0] | board.getAllPosBitBoard()[1]);
-//		long friendly = board.getAllPosBitBoard()[turn.ordinal()];
-//		long kingBitBoard = board.getPosBitBoard()[PieceID.KING.ordinal()][turn.ordinal()];
-//
-//		long left = 0xFEFEFEFEFEFEFEFEL & updown;
-//		long right = 0x7F7F7F7F7F7F7F7FL & updown;
-//
-//		long kingCheckVectors = King.getKingCheckVectors(board.getPosBitBoard()[PieceID.KING.ordinal()][turn.ordinal()], updown, left, right);
-//
-//		piece.getNullMoveInfo(board, nullMoveInfo, updown, left, right, kingBitBoard, kingCheckVectors, friendly);
-//
-//		System.out.println("updown\n" + BitBoard.printBitBoard(updown));
-//		System.out.println("left\n" + BitBoard.printBitBoard(left));
-//		System.out.println("right\n" + BitBoard.printBitBoard(right));
-//
-//		System.out.println("kingCheckVectors\n" + BitBoard.printBitBoard(kingCheckVectors));
-//
-//		System.out.println(BitBoard.printBitBoard(nullMoveInfo[0]));
-//
-//	}
+	// public static void main(String[] args) {
+	// String b = "R0,N0,B0,Q0,K0,__,N0,R0," + "P0,P0,P0,P0,__,P0,P0,P0," +
+	// "__,__,__,__,__,__,__,__," + "__,__,__,__,P1,__,__,__,"
+	// + "__,B0,__,__,__,__,__,__," + "__,__,n0,p1,__,__,__,__," +
+	// "p0,p0,p0,__,p0,p0,p0,p0," + "r0,__,b0,q0,k0,b0,n0,r0,";
+	//
+	// b = "<board>\n<setup>\n" + b + "</setup>\n<turn>WHITE</turn>\n</board>";
+	//
+	// Board board = XMLParser.XMLToBoard(b);
+	//
+	// Piece piece = board.getPiece(4, 1);
+	// long[] nullMoveInfo = new long[3];
+	//
+	// Side turn = board.getTurn();
+	// long updown = ~(board.getAllPosBitBoard()[0] |
+	// board.getAllPosBitBoard()[1]);
+	// long friendly = board.getAllPosBitBoard()[turn.ordinal()];
+	// long kingBitBoard =
+	// board.getPosBitBoard()[PieceID.KING.ordinal()][turn.ordinal()];
+	//
+	// long left = 0xFEFEFEFEFEFEFEFEL & updown;
+	// long right = 0x7F7F7F7F7F7F7F7FL & updown;
+	//
+	// long kingCheckVectors =
+	// King.getKingCheckVectors(board.getPosBitBoard()[PieceID.KING.ordinal()][turn.ordinal()],
+	// updown, left, right);
+	//
+	// piece.getNullMoveInfo(board, nullMoveInfo, updown, left, right,
+	// kingBitBoard, kingCheckVectors, friendly);
+	//
+	// System.out.println("updown\n" + BitBoard.printBitBoard(updown));
+	// System.out.println("left\n" + BitBoard.printBitBoard(left));
+	// System.out.println("right\n" + BitBoard.printBitBoard(right));
+	//
+	// System.out.println("kingCheckVectors\n" +
+	// BitBoard.printBitBoard(kingCheckVectors));
+	//
+	// System.out.println(BitBoard.printBitBoard(nullMoveInfo[0]));
+	//
+	// }
 
-	public void getNullMoveInfo(Board board, long[] nullMoveInfo, long updown, long left, long right, long kingBitBoard, long kingCheckVectors,
-			long friendly) {
+	public static void getNullMoveInfo(Piece piece, Board board, long[] nullMoveInfo, long updown, long left, long right, long kingBitBoard,
+			long kingCheckVectors, long friendly) {
 
-		long bitPiece = getBit();
+		int row = piece.getRow();
+		int col = piece.getCol();
+		long bitPiece = piece.getBit();
 
 		// up ------------------------------------------------------------
 		long temp = bitPiece;
@@ -318,17 +336,21 @@ public class Rook extends Piece {
 
 	}
 
-	public void getNullMoveInfo(Board board, long[] nullMoveInfo) {
+	public static void getNullMoveInfo(Piece piece, Board board, long[] nullMoveInfo) {
 		long bitAttackVector = 0;
 		long bitAttackCompliment = 0;
 		boolean inCheck = false;
 		Piece blockingPiece;
+		
+		int row = piece.getRow();
+		int col = piece.getCol();
+		Side player = piece.getSide();
 
 		int nextRow;
 		int nextCol;
 		PositionStatus pieceStatus;
 
-		long bitPosition = getBit();
+		long bitPosition = piece.getBit();
 
 		int i = 1;
 		for (int d = 0; d < 4; d++) {
@@ -398,11 +420,6 @@ public class Rook extends Piece {
 			i = 1;
 		}
 
-	}
-
-	@Override
-	public Piece getCopy() {
-		return new Rook(id, player, row, col, moved);
 	}
 
 }

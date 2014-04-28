@@ -48,7 +48,7 @@ public class BoardMaker {
 		Piece temp;
 		for (int s = 0; s < 2; s++) {
 			for (int p = 0; p < 8; p++) {
-				temp = new Pawn(PieceID.PAWN, Side.values()[s], pawnRow[s], p, false);
+				temp = new Piece(PieceID.PAWN, Side.values()[s], pawnRow[s], p, false);
 				pieces[s].add(temp);
 			}
 		}
@@ -70,7 +70,7 @@ public class BoardMaker {
 
 		for (int s = 0; s < 2; s++) {
 			for (int p = 0; p < 8; p++) {
-				temp = PieceUtils.buildPiece(setup[p], Side.values()[s], mainRow[s], p, false);
+				temp = new Piece(setup[p], Side.values()[s], mainRow[s], p, false);
 				pieces[s].add(temp);
 			}
 		}

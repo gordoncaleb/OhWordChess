@@ -15,6 +15,7 @@ import com.gordoncaleb.client.chess.Board;
 import com.gordoncaleb.client.chess.BoardMaker;
 import com.gordoncaleb.client.chess.Move;
 import com.gordoncaleb.client.pieces.Piece;
+import com.gordoncaleb.client.pieces.Piece.PieceID;
 import com.gordoncaleb.client.shapes.animation.transitions.LineTo;
 import com.gordoncaleb.client.shapes.animation.transitions.MoveTo;
 import com.gordoncaleb.client.shapes.animation.transitions.Path;
@@ -23,8 +24,9 @@ import com.gordoncaleb.client.shapes.animations.Animation;
 import com.gordoncaleb.client.shapes.animations.AnimationEvent;
 import com.gordoncaleb.client.shapes.animations.Event;
 import com.gordoncaleb.client.shapes.animations.EventHandler;
+import com.gordoncaleb.client.shapes.animations.interpolator.Interpolator;
 import com.gordoncaleb.client.util.CanvasUtils;
-import com.gordoncaleb.client.util.ImageLoader;
+import com.gordoncaleb.client.util.ResourceLoader;
 
 public class ChessBoardLayer extends Group implements MouseMoveHandler, MouseDownHandler {
 
@@ -35,7 +37,7 @@ public class ChessBoardLayer extends Group implements MouseMoveHandler, MouseDow
 	private List<EventHandler<AnimationEvent>> eventHandlers;
 
 	private Rectangle[][] squares = new Rectangle[8][8];
-	private Sprite[][] pieces = new Sprite[8][8];
+	private ChessPiece[][] pieces = new ChessPiece[8][8];
 	private CssColor lightColor, darkColor;
 
 	private int waiting = 0;
@@ -86,8 +88,9 @@ public class ChessBoardLayer extends Group implements MouseMoveHandler, MouseDow
 				pModel = board.getPiece(r, c);
 
 				if (pModel != null) {
-					String imgName = ImageLoader.getImageName(pModel.getPieceID(), pModel.getSide());
-					pieces[r][c] = new Sprite(imgName, s.getPosition().getX() + 1, s.getPosition().getY() + 1, w - 5, h - 5);
+					pieces[r][c] = new ChessPiece(pModel.getPieceID(), pModel.getSide(), s.getPosition().getX() + 1, s.getPosition().getY() + 1,
+							w - 5, h - 5);
+					pieces[r][c].setPiece(pModel);
 					pieceLayer.add(pieces[r][c]);
 				} else {
 					pieces[r][c] = null;
@@ -174,17 +177,21 @@ public class ChessBoardLayer extends Group implements MouseMoveHandler, MouseDow
 		final int fromCol = Move.getFromCol(move);
 
 		final UIObject2D movingPiece = pieces[fromRow][fromCol];
-		final UIObject2D takenPiece = pieces[toRow][toCol];
+
+		final int takenCol = Move.getPieceTakenCol(move);
+		final int takenRow = Move.getPieceTakenRow(move);
+
+		final UIObject2D takenPiece = Move.hasPieceTaken(move) ? pieces[takenRow][takenCol] : null;
 
 		double tx = getColPosition(toCol) + 1;
 		double ty = getRowPosition(toRow) + 1;
 		double fx = getColPosition(fromCol) + 1;
 		double fy = getRowPosition(fromRow) + 1;
 
-		Logger.getLogger("").log(Level.INFO, "tx,ty,fx,fy:" + tx + "," + ty + "  " + fx + "," + fy);
+		PathTransition a = PathTransition.linear(fx, fy, tx, ty);
 
-		Animation a = PathTransition.linear(fx, fy, tx, ty);
 		a.setDuration(500);
+		a.setInterpolator(Interpolator.EASE_BOTH);
 		// a.setAutoReverse(true);
 		a.play();
 

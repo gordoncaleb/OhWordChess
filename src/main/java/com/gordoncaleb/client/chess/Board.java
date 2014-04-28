@@ -7,7 +7,9 @@ import java.util.Vector;
 
 import com.gordoncaleb.client.chess.Move.MoveNote;
 import com.gordoncaleb.client.pieces.*;
-import com.gordoncaleb.client.pieces.Piece.PieceID;;
+import com.gordoncaleb.client.pieces.Piece.PieceID;
+
+;
 
 public class Board {
 	public static long[] noKillerMoves = {};
@@ -86,8 +88,8 @@ public class Board {
 		this.turn = Side.WHITE;
 		this.nullMoveInfo = new long[3];
 
-		kings[Side.BLACK.ordinal()] = new King(PieceID.KING, Side.BLACK, -1, -1, false);
-		kings[Side.WHITE.ordinal()] = new King(PieceID.KING, Side.WHITE, -1, -1, false);
+		kings[Side.BLACK.ordinal()] = new Piece(PieceID.KING, Side.BLACK, -1, -1, false);
+		kings[Side.WHITE.ordinal()] = new Piece(PieceID.KING, Side.WHITE, -1, -1, false);
 
 		placePiece(kings[Side.BLACK.ordinal()], 0, 0);
 		placePiece(kings[Side.WHITE.ordinal()], 7, 0);
@@ -170,8 +172,8 @@ public class Board {
 				move = moveHistory.elementAt(i).getMoveLong();
 				this.moveHistory.push(new Move(move));
 				if (Move.hasPieceTaken(move)) {
-					piecesTaken[moveSide.otherSide().ordinal()].push(PieceUtils.buildPiece(Move.getPieceTakenID(move), moveSide.otherSide(),
-							Move.getPieceTakenRow(move), Move.getPieceTakenCol(move), Move.getPieceTakenHasMoved(move)));
+					piecesTaken[moveSide.otherSide().ordinal()].push(new Piece(Move.getPieceTakenID(move), moveSide.otherSide(), Move
+							.getPieceTakenRow(move), Move.getPieceTakenCol(move), Move.getPieceTakenHasMoved(move)));
 				}
 
 				moveSide = moveSide.otherSide();
@@ -1445,23 +1447,23 @@ public class Board {
 		Stack<Piece> pieces = new Stack<Piece>();
 
 		for (int i = 0; i < 8; i++) {
-			pieces.add(new Pawn(PieceID.PAWN, player, 0, 0, false));
+			pieces.add(new Piece(PieceID.PAWN, player, 0, 0, false));
 		}
 
 		for (int i = 0; i < 2; i++) {
-			pieces.add(new Bishop(PieceID.BISHOP, player, 0, 0, false));
+			pieces.add(new Piece(PieceID.BISHOP, player, 0, 0, false));
 		}
 
 		for (int i = 0; i < 2; i++) {
-			pieces.add(new Rook(PieceID.ROOK, player, 0, 0, false));
+			pieces.add(new Piece(PieceID.ROOK, player, 0, 0, false));
 		}
 
 		for (int i = 0; i < 2; i++) {
-			pieces.add(new Knight(PieceID.KNIGHT, player, 0, 0, false));
+			pieces.add(new Piece(PieceID.KNIGHT, player, 0, 0, false));
 		}
 
-		pieces.add(new King(PieceID.KING, player, 0, 0, false));
-		pieces.add(new Queen(PieceID.QUEEN, player, 0, 0, false));
+		pieces.add(new Piece(PieceID.KING, player, 0, 0, false));
+		pieces.add(new Piece(PieceID.QUEEN, player, 0, 0, false));
 
 		return pieces;
 	}

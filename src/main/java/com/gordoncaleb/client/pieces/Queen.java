@@ -7,27 +7,28 @@ import com.gordoncaleb.client.chess.Board;
 import com.gordoncaleb.client.chess.Move;
 import com.gordoncaleb.client.chess.Move.MoveNote;
 import com.gordoncaleb.client.chess.Side;
+import com.gordoncaleb.client.pieces.Piece.PieceID;
 
-public class Queen extends Piece {
+public class Queen {
 	public static int[][] QUEENMOVES = { { 1, 1, -1, -1, 1, -1, 0, 0 }, { 1, -1, 1, -1, 0, 0, 1, -1 } };
 
-	public Queen(PieceID id, Side player, int row, int col, boolean moved) {
-		super(id, player, row, col, moved);
+	private Queen() {
+
 	}
 
-	public PieceID getPieceID() {
-		return PieceID.QUEEN;
-	}
-
-	public String getName() {
+	public static String getName() {
 		return "Queen";
 	}
 
-	public String getStringID() {
+	public static String getStringID() {
 		return "Q";
 	}
 
-	public void generateMoves(Board board, ArrayList<Long> moves) {
+	public static void generateMoves(Piece piece, Board board, ArrayList<Long> moves) {
+
+		int row = piece.getRow();
+		int col = piece.getCol();
+		Side player = piece.getSide();
 
 		int nextRow;
 		int nextCol;
@@ -59,7 +60,11 @@ public class Queen extends Piece {
 		}
 	}
 
-	public void generateValidMoves(Board board, long[] nullMoveInfo, long[] posBitBoard, ArrayList<Long> validMoves) {
+	public static void generateValidMoves(Piece piece, Board board, long[] nullMoveInfo, long[] posBitBoard, ArrayList<Long> validMoves) {
+
+		int row = piece.getRow();
+		int col = piece.getCol();
+		Side player = piece.getSide();
 
 		int nextRow;
 		int nextCol;
@@ -74,7 +79,7 @@ public class Queen extends Piece {
 
 			while (pieceStatus == PositionStatus.NO_PIECE) {
 
-				if (isValidMove(nextRow, nextCol, nullMoveInfo)) {
+				if (piece.isValidMove(nextRow, nextCol, nullMoveInfo)) {
 
 					if ((nullMoveInfo[0] & BitBoard.getMask(nextRow, nextCol)) != 0) {
 						value = -Values.QUEEN_VALUE >> 1;
@@ -93,7 +98,7 @@ public class Queen extends Piece {
 			}
 
 			if (pieceStatus == PositionStatus.ENEMY) {
-				if (isValidMove(nextRow, nextCol, nullMoveInfo)) {
+				if (piece.isValidMove(nextRow, nextCol, nullMoveInfo)) {
 
 					value = board.getPieceValue(nextRow, nextCol);
 
@@ -116,7 +121,7 @@ public class Queen extends Piece {
 
 		nullMoveInfo[1] = -1L;
 
-		Piece queen = new Queen(PieceID.QUEEN, Side.WHITE, 6, 0, false);
+		Piece queen = new Piece(PieceID.QUEEN, Side.WHITE, 6, 0, false);
 		long piece = queen.getBit();
 		long kingBitBoard = BitBoard.getMask(1, 0);
 
@@ -145,10 +150,12 @@ public class Queen extends Piece {
 		System.out.println("[2]\n" + BitBoard.printBitBoard(nullMoveInfo[2]));
 	}
 
-	public void getNullMoveInfo(Board board, long[] nullMoveInfo, long updown, long left, long right, long kingBitBoard, long kingCheckVectors,
-			long friendly) {
+	public static void getNullMoveInfo(Piece piece, Board board, long[] nullMoveInfo, long updown, long left, long right, long kingBitBoard,
+			long kingCheckVectors, long friendly) {
 
-		long bitPiece = getBit();
+		int row = piece.getRow();
+		int col = piece.getCol();
+		long bitPiece = piece.getBit();
 
 		// up ------------------------------------------------------------
 		long temp = bitPiece;
@@ -417,17 +424,21 @@ public class Queen extends Piece {
 
 	}
 
-	public void getNullMoveInfo(Board board, long[] nullMoveInfo) {
+	public static void getNullMoveInfo(Piece piece, Board board, long[] nullMoveInfo) {
 		long bitAttackVector = 0;
 		long bitAttackCompliment = 0;
 		boolean inCheck = false;
 		Piece blockingPiece;
 
+		int row = piece.getRow();
+		int col = piece.getCol();
+		Side player = piece.getSide();
+
 		int nextRow;
 		int nextCol;
 		PositionStatus pieceStatus;
 
-		long bitPosition = getBit();
+		long bitPosition = piece.getBit();
 
 		int i = 1;
 		for (int d = 0; d < 8; d++) {
@@ -498,11 +509,6 @@ public class Queen extends Piece {
 			i = 1;
 		}
 
-	}
-
-	@Override
-	public Piece getCopy() {
-		return new Queen(id, player, row, col, moved);
 	}
 
 }

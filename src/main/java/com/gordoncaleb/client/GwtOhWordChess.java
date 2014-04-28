@@ -2,6 +2,8 @@ package com.gordoncaleb.client;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
@@ -26,6 +28,8 @@ import com.gordoncaleb.client.shapes.ChessBoardLayer;
 import com.gordoncaleb.client.shapes.Drawable;
 import com.gordoncaleb.client.shapes.Group;
 import com.gordoncaleb.client.util.CanvasUtils;
+import com.gordoncaleb.client.util.ResourceLoader;
+import com.gordoncaleb.client.util.ResourceLoadEventHandler;
 
 public class GwtOhWordChess implements EntryPoint {
 
@@ -75,12 +79,25 @@ public class GwtOhWordChess implements EntryPoint {
 
 		// init the objects
 
-		board = new ChessBoardLayer(width, height, CanvasUtils.LIGHTBROWN, CanvasUtils.DARKBROWN);
+		ResourceLoader.loadAllImages(new ResourceLoadEventHandler() {
 
-		layers.add(board);
+			@Override
+			public void loadComplete() {
+				Logger.getLogger("").log(Level.INFO, "Load Complete!");
 
-		// init handlers
-		initHandlers();
+				board = new ChessBoardLayer(width, height, CanvasUtils.LIGHTBROWN, CanvasUtils.DARKBROWN);
+				layers.add(board);
+
+				// init handlers
+				initHandlers();
+			}
+
+			@Override
+			public void loadProgress(double progress) {
+				Logger.getLogger("").log(Level.INFO, "Loaded " + progress);
+			}
+
+		});
 
 		// setup timer
 		final Timer timer = new Timer() {

@@ -386,7 +386,7 @@ public class BoardPanel extends JPanel implements MouseListener, ActionListener 
 			SquarePanel toSqr = (SquarePanel) toComponent;
 			JPieceTakenLabel fromLbl = (JPieceTakenLabel) fromComponent;
 
-			Piece piece = PieceUtils.buildPiece(fromLbl.getPieceID(), fromLbl.getPlayer(), -1, -1, false);
+			Piece piece = new Piece(fromLbl.getPieceID(), fromLbl.getPlayer(), -1, -1, false);
 
 			if (adjudicator.placePiece(piece, flipTrans(toSqr.getRow()), flipTrans(toSqr.getCol()))) {
 				if (toSqr.getPieceID() != null) {
