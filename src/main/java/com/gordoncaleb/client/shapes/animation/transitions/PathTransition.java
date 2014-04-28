@@ -18,7 +18,7 @@ public class PathTransition extends Transition {
 	}
 
 	@Override
-	public void animateImpl() {
+	public void animate() {
 		node.setPosition(path.interpolatePoint(interpolator.curve(getProgress())));
 	}
 

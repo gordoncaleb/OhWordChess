@@ -51,4 +51,10 @@ public class Vector2D {
 	public double distance(Vector2D vector) {
 		return Math.sqrt(Math.pow(x - vector.getX(), 2) + Math.pow(y - vector.getY(), 2));
 	}
+
+	@Override
+	public String toString() {
+		return "Vector2D [x=" + x + ", y=" + y + "]";
+	}
+
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
@@ -19,6 +20,9 @@ import com.gordoncaleb.client.shapes.animation.transitions.MoveTo;
 import com.gordoncaleb.client.shapes.animation.transitions.Path;
 import com.gordoncaleb.client.shapes.animation.transitions.PathTransition;
 import com.gordoncaleb.client.shapes.animations.Animation;
+import com.gordoncaleb.client.shapes.animations.AnimationEvent;
+import com.gordoncaleb.client.shapes.animations.Event;
+import com.gordoncaleb.client.shapes.animations.EventHandler;
 import com.gordoncaleb.client.util.CanvasUtils;
 import com.gordoncaleb.client.util.ImageLoader;
 
@@ -26,6 +30,9 @@ public class ChessBoardLayer extends Group implements MouseMoveHandler, MouseDow
 
 	private Group boardLayer;
 	private Group pieceLayer;
+
+	private Group movingPieces;
+	private List<EventHandler<AnimationEvent>> eventHandlers;
 
 	private Rectangle[][] squares = new Rectangle[8][8];
 	private Sprite[][] pieces = new Sprite[8][8];
@@ -49,9 +56,13 @@ public class ChessBoardLayer extends Group implements MouseMoveHandler, MouseDow
 
 		boardLayer = new Group();
 		pieceLayer = new Group();
+		movingPieces = new Group();
+
+		eventHandlers = new ArrayList<EventHandler<AnimationEvent>>();
 
 		this.add(boardLayer);
 		this.add(pieceLayer);
+		this.add(movingPieces);
 
 		this.width = width;
 		this.height = height;
@@ -157,30 +168,59 @@ public class ChessBoardLayer extends Group implements MouseMoveHandler, MouseDow
 	}
 
 	public void animateMove(Long move) {
-		int toRow = Move.getToRow(move);
-		int toCol = Move.getToCol(move);
+		final int toRow = Move.getToRow(move);
+		final int toCol = Move.getToCol(move);
+		final int fromRow = Move.getFromRow(move);
+		final int fromCol = Move.getFromCol(move);
 
-		if (pieces[toRow][toCol] != null) {
-			pieceLayer.remove(pieces[toRow][toCol]);
-		}
-
-		pieces[toRow][toCol] = pieces[selected[0]][selected[1]];
-		pieces[selected[0]][selected[1]] = null;
+		final UIObject2D movingPiece = pieces[fromRow][fromCol];
+		final UIObject2D takenPiece = pieces[toRow][toCol];
 
 		double tx = getColPosition(toCol) + 1;
 		double ty = getRowPosition(toRow) + 1;
-		double fx = getColPosition(toCol) + 1;
-		double fy = getRowPosition(toRow) + 1;
+		double fx = getColPosition(fromCol) + 1;
+		double fy = getRowPosition(fromRow) + 1;
+
+		Logger.getLogger("").log(Level.INFO, "tx,ty,fx,fy:" + tx + "," + ty + "  " + fx + "," + fy);
 
 		Animation a = PathTransition.linear(fx, fy, tx, ty);
-		a.setDuration(5000);
-		//a.setAutoReverse(true);
+		a.setDuration(500);
+		// a.setAutoReverse(true);
 		a.play();
 
-		
-		//Logger.getLogger("").log(Level.INFO, "Animating from " + imagePath);
-		
-		pieces[toRow][toCol].setAnimation(a);
+		// Logger.getLogger("").log(Level.INFO, "Animating from " + imagePath);
+
+		a.setOnFinished(new EventHandler<AnimationEvent>() {
+
+			@Override
+			public void handle(AnimationEvent event) {
+
+				eventHandlers.add(new EventHandler<AnimationEvent>() {
+
+					@Override
+					public void handle(AnimationEvent event) {
+
+						if (takenPiece != null) {
+							pieceLayer.remove(takenPiece);
+						}
+
+						pieces[toRow][toCol] = pieces[fromRow][fromCol];
+						pieces[fromRow][fromCol] = null;
+
+						movingPieces.remove(movingPiece);
+						pieceLayer.add(movingPiece);
+					}
+
+				});
+
+			}
+
+		});
+
+		movingPieces.add(movingPiece);
+		pieceLayer.remove(movingPiece);
+
+		movingPiece.setAnimation(a);
 
 		// pieces[row][col].setPosition(getColPosition(col) + 1,
 		// getRowPosition(row) + 1);
@@ -226,6 +266,21 @@ public class ChessBoardLayer extends Group implements MouseMoveHandler, MouseDow
 			clickY = e.getRelativeY(e.getRelativeElement());
 			selectSquare(clickX, clickY);
 		}
+	}
+
+	@Override
+	public void propagateAndAnimate(double elapsedTime) {
+		super.propagateAndAnimate(elapsedTime);
+		for (EventHandler<AnimationEvent> event : eventHandlers) {
+			event.handle(null);
+		}
+
+		eventHandlers.clear();
+	}
+
+	@Override
+	public void draw(Context2d context) {
+		super.draw(context);
 	}
 
 }

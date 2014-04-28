@@ -11,11 +11,11 @@ public abstract class Animation {
 		PAUSED, RUNNING, STOPPED
 	}
 
-	private static final double DEFAULT_RATE = 1.0;
-	private static final Status DEFAULT_STATUS = Status.STOPPED;
-	private static final boolean DEFAULT_AUTO_REVERSE = false;
-	private static final Double INITIAL_PLAY_HEAD = null;
-	private static final double INFINITE_CYCLES = Double.POSITIVE_INFINITY;
+	public static final double DEFAULT_RATE = 1.0;
+	public static final Status DEFAULT_STATUS = Status.STOPPED;
+	public static final boolean DEFAULT_AUTO_REVERSE = false;
+	public static final Double INITIAL_PLAY_HEAD = 0.0;
+	public static final double INFINITE_CYCLES = Double.POSITIVE_INFINITY;
 
 	protected Status status = DEFAULT_STATUS;
 	protected double rate = DEFAULT_RATE;
@@ -28,7 +28,7 @@ public abstract class Animation {
 	protected double cycleCount = 0;
 	protected double duration = 1000;
 
-	protected EventHandler<AnimationFinishedEvent> onFinished;
+	protected EventHandler<AnimationEvent> onFinished;
 
 	public Animation() {
 	}
@@ -54,7 +54,6 @@ public abstract class Animation {
 
 	public Animation stop() {
 		status = Status.STOPPED;
-		Logger.getLogger("").log(Level.INFO, "Animation stopped");
 		return this;
 	}
 
@@ -63,38 +62,38 @@ public abstract class Animation {
 		return this;
 	}
 
-	public void propagate(double elapsedTime) {
+	public void propagateAndAnimate(double elapsedTime) {
 		if (status == Status.RUNNING) {
-			if (playHead != INITIAL_PLAY_HEAD) {
-				playHead = Math.max(0.0, Math.min(duration, playHead + rate * elapsedTime));
 
-				Logger.getLogger("").log(Level.INFO, "Elapsed Time" + elapsedTime);
+			playHead = playHead + rate * elapsedTime;
 
-				if (playHead >= duration || playHead <= 0.0) {
+			if (playHead >= duration || playHead <= 0.0) {
 
-					if (cycles == INFINITE_CYCLES || cycleCount < (cycles - 1)) {
+				double overflow = playHead % duration;
+				playHead = Math.max(0.0, Math.min(playHead, duration));
 
-						if (autoReverse) {
-							rate = -rate;
-						} else {
-							playHead = (rate > 0) ? 0.0 : 1.0;
-						}
+				if (cycles == INFINITE_CYCLES || cycleCount < (cycles - 1)) {
 
-						cycleCount++;
+					if (autoReverse) {
+						rate = -rate;
 					} else {
-						stop();
-						if (onFinished != null) {
-							onFinished.handle(new AnimationFinishedEvent(this));
-						}
-
+						playHead = (rate > 0) ? 0.0 : duration;
 					}
-				}
 
-				Logger.getLogger("").log(Level.INFO, "PlayHead set to " + playHead);
-			} else {
-				playHead = 0.0;
-				Logger.getLogger("").log(Level.INFO, "PlayHead set to 0");
+					playHead = playHead + rate * overflow;
+
+					cycleCount++;
+				} else {
+
+					stop();
+					if (onFinished != null) {
+						onFinished.handle(new AnimationEvent(this));
+					}
+
+				}
 			}
+
+			animate();
 
 		}
 
@@ -156,11 +155,11 @@ public abstract class Animation {
 		this.playHead = playHead;
 	}
 
-	public EventHandler<AnimationFinishedEvent> getOnFinshed() {
+	public EventHandler<AnimationEvent> getOnFinshed() {
 		return onFinished;
 	}
 
-	public void setOnFinshed(EventHandler<AnimationFinishedEvent> onFinshed) {
+	public void setOnFinshed(EventHandler<AnimationEvent> onFinshed) {
 		this.onFinished = onFinshed;
 	}
 
@@ -172,12 +171,22 @@ public abstract class Animation {
 		this.node = node;
 	}
 
-	public void animate() {
-		if (isRunning()) {
-			animateImpl();
-		}
+	public double getCycles() {
+		return cycles;
 	}
 
-	public abstract void animateImpl();
+	public void setCycles(double cycles) {
+		this.cycles = cycles;
+	}
+
+	public EventHandler<AnimationEvent> getOnFinished() {
+		return onFinished;
+	}
+
+	public void setOnFinished(EventHandler<AnimationEvent> onFinished) {
+		this.onFinished = onFinished;
+	}
+
+	public abstract void animate();
 
 }

@@ -107,8 +107,7 @@ public abstract class UIObject2D implements Drawable, Propagatable {
 
 	public void propagateAndAnimate(double elapsedTime) {
 		if (animation != null) {
-			animation.propagate(elapsedTime);
-			animation.animate();
+			animation.propagateAndAnimate(elapsedTime);
 		}
 	}
 

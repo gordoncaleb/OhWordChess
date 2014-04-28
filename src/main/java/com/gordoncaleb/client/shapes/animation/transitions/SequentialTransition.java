@@ -59,8 +59,7 @@ public class SequentialTransition extends Transition {
 	public void setDuration(double duration) {
 	}
 
-	public void propagate(double elapsedTime) {
-		super.propagate(elapsedTime);
+	public void propagateAndAnimate(double elapsedTime) {
 
 		double tempPlayHead = this.playHead;
 
@@ -73,10 +72,12 @@ public class SequentialTransition extends Transition {
 				tempPlayHead -= t.getDuration();
 			}
 		}
+
+		super.propagateAndAnimate(elapsedTime);
 	}
 
 	@Override
-	public void animateImpl() {
+	public void animate() {
 		currentTransition.animate();
 	}
 }

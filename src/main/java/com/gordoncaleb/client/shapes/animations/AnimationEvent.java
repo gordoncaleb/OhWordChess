@@ -1,10 +1,10 @@
 package com.gordoncaleb.client.shapes.animations;
 
-public class AnimationFinishedEvent implements Event {
+public class AnimationEvent implements Event {
 
 	private Animation source;
 
-	public AnimationFinishedEvent(Animation source) {
+	public AnimationEvent(Animation source) {
 		this.source = source;
 	}
 

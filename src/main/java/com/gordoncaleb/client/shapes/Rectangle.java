@@ -8,6 +8,10 @@ public class Rectangle extends UIObject2D {
 	private CssColor fillColor;
 	private CssColor strokeColor;
 
+	public Rectangle() {
+
+	}
+
 	public Rectangle(CssColor fillColor, CssColor strokeColor, int x, int y, int width, int height) {
 		super();
 
