@@ -100,11 +100,7 @@ public abstract class Animation {
 	}
 
 	public Double getProgress() {
-		if (playHead != null) {
-			return playHead / duration;
-		} else {
-			return null;
-		}
+		return playHead / duration;
 	}
 
 	public Status getStatus() {

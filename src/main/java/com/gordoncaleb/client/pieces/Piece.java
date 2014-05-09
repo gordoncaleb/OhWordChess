@@ -185,16 +185,22 @@ public class Piece {
 		switch (id) {
 		case BISHOP:
 			Bishop.generateValidMoves(this, board, nullMoveInfo, posBitBoard, validMoves);
+			break;
 		case KING:
 			King.generateValidMoves(this, board, nullMoveInfo, posBitBoard, validMoves);
+			break;
 		case KNIGHT:
 			Knight.generateValidMoves(this, board, nullMoveInfo, posBitBoard, validMoves);
+			break;
 		case PAWN:
 			Pawn.generateValidMoves(this, board, nullMoveInfo, posBitBoard, validMoves);
+			break;
 		case QUEEN:
 			Queen.generateValidMoves(this, board, nullMoveInfo, posBitBoard, validMoves);
+			break;
 		case ROOK:
 			Rook.generateValidMoves(this, board, nullMoveInfo, posBitBoard, validMoves);
+			break;
 		}
 	}
 
@@ -203,19 +209,25 @@ public class Piece {
 		switch (id) {
 		case BISHOP:
 			Bishop.getNullMoveInfo(this, board, nullMoveInfo, updown, left, right, kingBitBoard, kingCheckVectors, friendly);
+			break;
 		case KING:
 			// King.getNullMoveInfo(this, board, nullMoveInfo, updown, left,
 			// right, kingBitBoard, kingCheckVectors, friendly);
+			break;
 		case KNIGHT:
 			// Knight.getNullMoveInfo(this, board, nullMoveInfo, updown, left,
 			// right, kingBitBoard, kingCheckVectors, friendly);
+			break;
 		case PAWN:
 			// Pawn.getNullMoveInfo(this, board, nullMoveInfo, updown, left,
 			// right, kingBitBoard, kingCheckVectors, friendly);
+			break;
 		case QUEEN:
 			Queen.getNullMoveInfo(this, board, nullMoveInfo, updown, left, right, kingBitBoard, kingCheckVectors, friendly);
+			break;
 		case ROOK:
 			Rook.getNullMoveInfo(this, board, nullMoveInfo, updown, left, right, kingBitBoard, kingCheckVectors, friendly);
+			break;
 		}
 	}
 

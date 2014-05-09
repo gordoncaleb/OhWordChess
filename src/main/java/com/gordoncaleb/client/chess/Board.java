@@ -1076,6 +1076,18 @@ public class Board {
 		return hasMoved(materialRow[player.ordinal()], rookStartCols[player.ordinal()][1]);
 	}
 
+	public int getMaterialRow(Side player) {
+		return materialRow[player.ordinal()];
+	}
+
+	public int getNearRookStartingCol(Side side) {
+		return rookStartCols[side.ordinal()][1];
+	}
+
+	public int getFarRookStartingCol(Side side) {
+		return rookStartCols[side.ordinal()][0];
+	}
+
 	public int getRookStartingCol(Side side, int near) {
 		return rookStartCols[side.ordinal()][near];
 	}

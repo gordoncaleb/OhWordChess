@@ -2,8 +2,6 @@ package com.gordoncaleb.client.shapes;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
@@ -14,19 +12,15 @@ import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.gordoncaleb.client.chess.Board;
 import com.gordoncaleb.client.chess.BoardMaker;
 import com.gordoncaleb.client.chess.Move;
+import com.gordoncaleb.client.chess.Move.MoveNote;
+import com.gordoncaleb.client.chess.Side;
 import com.gordoncaleb.client.pieces.Piece;
-import com.gordoncaleb.client.pieces.Piece.PieceID;
-import com.gordoncaleb.client.shapes.animation.transitions.LineTo;
-import com.gordoncaleb.client.shapes.animation.transitions.MoveTo;
-import com.gordoncaleb.client.shapes.animation.transitions.Path;
 import com.gordoncaleb.client.shapes.animation.transitions.PathTransition;
-import com.gordoncaleb.client.shapes.animations.Animation;
+import com.gordoncaleb.client.shapes.animation.transitions.SequentialTransition;
 import com.gordoncaleb.client.shapes.animations.AnimationEvent;
-import com.gordoncaleb.client.shapes.animations.Event;
 import com.gordoncaleb.client.shapes.animations.EventHandler;
 import com.gordoncaleb.client.shapes.animations.interpolator.Interpolator;
 import com.gordoncaleb.client.util.CanvasUtils;
-import com.gordoncaleb.client.util.ResourceLoader;
 
 public class ChessBoardLayer extends Group implements MouseMoveHandler, MouseDownHandler {
 
@@ -158,11 +152,12 @@ public class ChessBoardLayer extends Group implements MouseMoveHandler, MouseDow
 				if (selected != null) {
 					Long move = isValidMove(selected[0], selected[1], row, col);
 					if (move != null) {
+
+						animateMove(move);
+
 						board.makeMove(move);
 						board.makeNullMove();
 						board.generateValidMoves();
-
-						animateMove(move);
 					}
 				}
 				selected = null;
@@ -183,6 +178,8 @@ public class ChessBoardLayer extends Group implements MouseMoveHandler, MouseDow
 
 		final UIObject2D takenPiece = Move.hasPieceTaken(move) ? pieces[takenRow][takenCol] : null;
 
+		SequentialTransition seqTrans = new SequentialTransition();
+
 		double tx = getColPosition(toCol) + 1;
 		double ty = getRowPosition(toRow) + 1;
 		double fx = getColPosition(fromCol) + 1;
@@ -192,8 +189,7 @@ public class ChessBoardLayer extends Group implements MouseMoveHandler, MouseDow
 
 		a.setDuration(500);
 		a.setInterpolator(Interpolator.EASE_BOTH);
-		// a.setAutoReverse(true);
-		a.play();
+		// a.setAutoReverse(true);`
 
 		// Logger.getLogger("").log(Level.INFO, "Animating from " + imagePath);
 
@@ -228,6 +224,72 @@ public class ChessBoardLayer extends Group implements MouseMoveHandler, MouseDow
 		pieceLayer.remove(movingPiece);
 
 		movingPiece.setAnimation(a);
+		
+		seqTrans.add(a);
+
+		MoveNote note = Move.getNote(move);
+
+		switch (note) {
+		case CASTLE_FAR:
+			final Side turn = board.getTurn();
+			final UIObject2D rook = pieces[board.getMaterialRow(turn)][board.getFarRookStartingCol(turn)];
+			final int rookToCol = 3;
+			final int rookToRow = toRow;
+			final int rookFromCol = board.getFarRookStartingCol(turn);
+			final int rookFromRow = fromRow;
+			
+			tx = getColPosition(rookToCol) + 1;
+			ty = getRowPosition(rookToRow) + 1;
+			fx = getColPosition(rookFromCol) + 1;
+			fy = getRowPosition(rookFromRow) + 1;
+
+			PathTransition r = PathTransition.linear(fx, fy, tx, ty);
+
+			r.setDuration(500);
+			r.setInterpolator(Interpolator.EASE_BOTH);
+			
+			r.setOnFinished(new EventHandler<AnimationEvent>() {
+
+				@Override
+				public void handle(AnimationEvent event) {
+
+					eventHandlers.add(new EventHandler<AnimationEvent>() {
+
+						@Override
+						public void handle(AnimationEvent event) {
+
+							pieces[rookToRow][rookToCol] = pieces[rookFromRow][rookFromCol];
+							pieces[rookFromRow][rookFromCol] = null;
+
+							movingPieces.remove(rook);
+							pieceLayer.add(rook);
+						}
+
+					});
+
+				}
+
+			});
+
+			movingPieces.add(rook);
+			pieceLayer.remove(rook);
+			
+			rook.setAnimation(r);
+			
+			seqTrans.add(r);
+
+			break;
+		case CASTLE_NEAR:
+			break;
+		case NEW_QUEEN:
+			break;
+		default:
+			break;
+		}
+
+		//a.play();
+		
+		seqTrans.play();
 
 		// pieces[row][col].setPosition(getColPosition(col) + 1,
 		// getRowPosition(row) + 1);
